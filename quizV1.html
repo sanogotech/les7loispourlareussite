@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz · Murphy + Kindlin · Anticipation & Clarification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --murphy: #dc2626; --kindlin: #3b82f6; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #1e293b, #0f172a); min-height: 100vh; padding: 1rem; }
+        .quiz-container { max-width: 1000px; margin: auto; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .quiz-header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; }
+        .badge-murphy { background: rgba(220,38,38,0.1); color: var(--murphy); border: 1px solid var(--murphy); }
+        .badge-kindlin { background: rgba(59,130,246,0.1); color: var(--kindlin); border: 1px solid var(--kindlin); }
+        .option-btn { display: block; width: 100%; text-align: left; padding: 0.8rem 1rem; margin-bottom: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px; background: white; transition: 0.2s; }
+        .option-btn:hover:not([disabled]) { border-color: #f97316; transform: translateY(-2px); }
+        .option-btn.correct { background: #d1fae5; border-color: #10b981; color: #065f46; font-weight: 600; }
+        .option-btn.incorrect { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; font-weight: 600; }
+        .feedback-correct { background: #ecfdf5; border-left: 5px solid #10b981; }
+        .feedback-incorrect { background: #fef2f2; border-left: 5px solid #dc2626; }
+        .tip-box { background: #fef9e3; border-left: 5px solid #facc15; margin-top: 0.8rem; padding: 0.8rem; border-radius: 8px; }
+        .btn-audit { background: linear-gradient(135deg, #f97316, #dc2626); color: white; border: none; }
+        .progress-bar { background: linear-gradient(90deg, #f97316, #dc2626); }
+        .final-score { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .explanation-law { background: #f8fafc; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid; transition: 0.2s; }
+        .explanation-law:hover { transform: translateX(5px); }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1><i class="fas fa-bomb"></i> Loi de Murphy + <i class="fas fa-search"></i> Loi de Kindlin</h1>
+            <p>Anticiper les pannes · Clarifier les problèmes · 80 cas pratiques avec REX et conseils</p>
+        </div>
+
+        <!-- Explications des lois -->
+        <div class="row mb-5 g-4">
+            <div class="col-md-6">
+                <div class="explanation-law" style="border-left-color: var(--murphy);">
+                    <h3 class="text-danger"><i class="fas fa-bomb"></i> Loi de Murphy</h3>
+                    <p class="lead">« Tout ce qui peut mal tourner finira par mal tourner. »</p>
+                    <p><strong>📌 Exemple :</strong> Un déploiement le vendredi à 17h → panne → équipe indisponible → perte financière.</p>
+                    <p><strong>🏆 REX :</strong> Netflix utilise <em>Chaos Monkey</em> pour provoquer des pannes volontaires → résilience → 99,99% de disponibilité.</p>
+                    <p><strong>📊 Chiffre :</strong> Les projets avec <em>pre‑mortem</em> réduisent les dépassements de budget de <strong>30%</strong> (MIT).</p>
+                    <p><strong>💡 Astuce :</strong> Testez vos backups, ajoutez 20-30% de marge, simulez des pannes.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="explanation-law" style="border-left-color: var(--kindlin);">
+                    <h3 class="text-primary"><i class="fas fa-search"></i> Loi de Kindlin</h3>
+                    <p class="lead">« Un problème bien formulé est à moitié résolu. »</p>
+                    <p><strong>📌 Exemple :</strong> « L’application est lente » → « Le temps de réponse du paiement >2s pour 10% des utilisateurs » → solution évidente.</p>
+                    <p><strong>🏆 REX :</strong> Une équipe support a réduit son MTTR de 70% avec un template structuré.</p>
+                    <p><strong>📊 Chiffre :</strong> 80% des problèmes complexes se résolvent en moins d’1h après clarification.</p>
+                    <p><strong>💡 Astuce :</strong> Posez la question : « Quel est l’écart exact entre la situation actuelle et l’objectif ? »</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div id="settings-panel">
+            <h4 class="text-center mb-4"><i class="fas fa-sliders-h"></i> Configuration du quiz</h4>
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <select id="question-count" class="form-select">
+                        <option value="20">20 questions (Rapide)</option>
+                        <option value="40" selected>40 questions (Standard)</option>
+                        <option value="60">60 questions (Complet)</option>
+                        <option value="80">80 questions (Expert – intégral)</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="start-quiz-btn" class="btn btn-audit w-100"><i class="fas fa-rocket"></i> Démarrer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz content -->
+        <div id="quiz-content" class="d-none">
+            <div class="d-flex justify-content-between mb-2"><span id="question-counter"></span><span id="current-score">Score: 0</span></div>
+            <div class="progress mb-3"><div id="progress-bar" class="progress-bar" style="width:0%"></div></div>
+            <div class="card p-3">
+                <div class="thematic-badge" id="thematic-badge"></div>
+                <h3 id="question-text" class="mt-2"></h3>
+                <div id="options-container"></div>
+                <div id="feedback-box" class="d-none mt-3 p-3 rounded"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <button id="prev-btn" class="btn btn-outline-secondary" disabled><i class="fas fa-arrow-left"></i> Précédent</button>
+                <button id="next-btn" class="btn btn-audit">Suivant <i class="fas fa-arrow-right"></i></button>
+                <button id="finish-btn" class="btn btn-success d-none"><i class="fas fa-trophy"></i> Terminer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal résultats -->
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white"><h5 class="modal-title"><i class="fas fa-chart-line"></i> Résultats</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="text-center"><p class="final-score" id="final-score-percentage">0%</p><p><span id="final-score-correct">0</span> / <span id="final-score-total">0</span></p></div>
+                <div class="row"><div class="col-md-6"><h6>Maîtrise de Murphy</h6><div class="progress"><div id="murphy-skill" class="progress-bar bg-danger" style="width:0%"></div></div><p id="murphy-text"></p></div>
+                <div class="col-md-6"><h6>Maîtrise de Kindlin</h6><div class="progress"><div id="kindlin-skill" class="progress-bar bg-primary" style="width:0%"></div></div><p id="kindlin-text"></p></div></div>
+                <hr><div id="final-recommendations"></div>
+                <div class="mt-3"><h6>📌 Plan de progression</h6><p id="short-term" class="alert alert-primary"></p><p id="long-term" class="alert alert-secondary"></p></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button><button id="restart-quiz-btn" class="btn btn-audit">Recommencer</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ********** 80 QUESTIONS UNIQUES : 40 MURPHY + 40 KINDLIN **********
+const FULL_QUESTIONS = [
+    { thematic:"Loi de Murphy", question:"Comment transformer la loi de Murphy en avantage concurrentiel en DevOps ?", options:["Automatiser les tests d'injection de pannes (chaos engineering)","Ignorer les risques mineurs","Multiplier les validations manuelles","Déployer uniquement la nuit"], correctAnswer:"Automatiser les tests d'injection de pannes (chaos engineering)", explanation:"✅ REX Netflix : Chaos Monkey provoque des pannes volontaires → résilience accrue, 99,99% dispo. Anticiper l’inévitable renforce le système.", tip:"💡 Organisez des 'game days' mensuels avec injection de pannes." },
+    { thematic:"Loi de Murphy", question:"Quel est le REX classique concernant les sauvegardes ?", options:["Une sauvegarde non testée équivaut à aucune sauvegarde","Les sauvegardes quotidiennes suffisent","Le cloud supprime le besoin de sauvegarde","Les sauvegardes incrémentales sont inutiles"], correctAnswer:"Une sauvegarde non testée équivaut à aucune sauvegarde", explanation:"📊 Chiffre : 70% des entreprises qui ne testent pas leurs restaurations subissent une perte de données. Murphy frappe lors de la vraie restauration.", tip:"💡 Automatisez une restauration complète en environnement de staging chaque mois." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les déploiements du vendredi sont-ils déconseillés ?", options:["Fatigue et indisponibilité le week-end","Serveurs moins performants","Managers absents","Tests désactivés"], correctAnswer:"Fatigue et indisponibilité le week-end", explanation:"🏆 REX DSI : 80% des incidents critiques surviennent lors des déploiements de fin de semaine. La fatigue accroît les erreurs, le support réduit allonge les corrections.", tip:"📅 Planifiez les releases critiques le mardi ou mercredi." },
+    { thematic:"Loi de Murphy", question:"Dans un pipeline CI/CD, quelle pratique évite le 'Murphy des dépendances' ?", options:["Mettre en cache toutes les dépendances dans un registre local","Télécharger depuis internet à chaque build","Utiliser des versions 'latest'","Supprimer le lock file"], correctAnswer:"Mettre en cache toutes les dépendances dans un registre local", explanation:"✅ REX : des entreprises ont évité des arrêts de production de 6h grâce à un miroir local (Artifactory). Le registre public peut tomber.", tip:"💡 Utilisez le 'vendoring' pour Go, Rust ou un cache Docker." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce qu'un 'pre-mortem' en gestion de projet ?", options:["Imaginer que le projet a échoué et remonter aux causes possibles","Faire un bilan après l'échec","Anticiper les succès","Une revue de code"], correctAnswer:"Imaginer que le projet a échoué et remonter aux causes possibles", explanation:"📊 Étude Harvard : le pre-mortem réduit les échecs de 30%. On liste les risques avant qu’ils ne surviennent.", tip:"💡 Organisez un pre-mortem d'une heure avant chaque phase critique." },
+    { thematic:"Loi de Murphy", question:"Quel indicateur de fiabilité résume la maîtrise de Murphy ?", options:["MTTR (Mean Time To Repair)","Nombre de lignes de code","Taux d'absentéisme","Vélocité"], correctAnswer:"MTTR (Mean Time To Repair)", explanation:"🏆 Les meilleures équipes ont un MTTR < 1 heure. Murphy ne s’élimine pas, mais on réduit le temps de récupération.", tip:"💡 Mesurez le MTTR et fixez un objectif de moins d'une heure." },
+    { thematic:"Loi de Murphy", question:"Comment appliquer Murphy à la gestion des mots de passe ?", options:["Gestionnaire de mots de passe + MFA","Carnet papier","Email","Réutilisation"], correctAnswer:"Gestionnaire de mots de passe + MFA", explanation:"📊 80% des failles sont liées à des mots de passe faibles ou volés. Murphy : un utilisateur oubliera ou se fera voler.", tip:"💡 Activez la rotation automatique des secrets (Vault)." },
+    { thematic:"Loi de Murphy", question:"Que signifie 'Murphy-proofing' une interface utilisateur ?", options:["Empêcher les actions destructrices par des confirmations","Avertissements en rouge","Supprimer les boutons","Former les utilisateurs"], correctAnswer:"Empêcher les actions destructrices par des confirmations", explanation:"✅ Exemple : Gmail demande une confirmation avant d’envoyer sans pièce jointe. Le design anti-erreur désamorce Murphy.", tip:"💡 Utilisez des 'undo' et des corbeilles plutôt que des suppressions définitives." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les estimations incluent-elles souvent un facteur 20-30% ?", options:["Pour absorber les imprévus","Pour faire plaisir","Réduire la charge","Respecter le budget"], correctAnswer:"Pour absorber les imprévus", explanation:"📊 Les aléas (bug, arrêt maladie, dépendance) représentent ~25% du temps. Ignorer Murphy conduit aux dépassements.", tip:"💡 Utilisez l'estimation par fourchette (optimiste, probable, pessimiste)." },
+    { thematic:"Loi de Murphy", question:"Quelle approche architecturale intègre Murphy dès la conception ?", options:["Design for failure","Monolithe centralisé","Base de données unique","SPOF assumé"], correctAnswer:"Design for failure", explanation:"🏆 Netflix a survécu à la destruction d'une zone AWS entière grâce à ce principe. Chaque composant peut tomber, on conçoit des redondances.", tip:"💡 Appliquez 'circuit breaker' et 'retry with backoff'." },
+    { thematic:"Loi de Murphy", question:"En logistique, comment lutter contre la casse des colis ?", options:["Tests de chute et suremballage","Assurance systématique","Livraison en main propre","Réduire le nombre de colis"], correctAnswer:"Tests de chute et suremballage", explanation:"📊 REX Amazon : les tests d'emballage ont réduit les retours de 40%. Un colis sera mal manipulé.", tip:"💡 Ajoutez des indicateurs de choc (labels 'fragile' à détection)." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce que le 'principe de la double vérification' ?", options:["Validation par deux personnes ou systèmes","Une seule personne","Une seule vérification","Aucune"], correctAnswer:"Validation par deux personnes ou systèmes", explanation:"✅ REX aéronautique : le 'crew resource management' a sauvé des vies. Murphy : une erreur humaine peut survenir.", tip:"💡 Pour les opérations sensibles (paiement, suppression), imposez une validation à deux." },
+    { thematic:"Loi de Murphy", question:"Comment anticiper Murphy dans la gestion des stocks ?", options:["Stock de sécurité basé sur la demande et les délais","Stock minimum","Pas de stock","Stock maximal permanent"], correctAnswer:"Stock de sécurité basé sur la demande et les délais", explanation:"📊 La formule du stock de sécurité intègre l'écart-type. Les ruptures arrivent si on ne prévoit pas les aléas.", tip:"💡 Calculez votre stock de sécurité avec la méthode de la loi normale." },
+    { thematic:"Loi de Murphy", question:"Que faire si un process critique n'a jamais échoué ?", options:["Simuler une panne (chaos engineering)","Rien, c'est parfait","L'ignorer","Le supprimer"], correctAnswer:"Simuler une panne (chaos engineering)", explanation:"🏆 Murphy : 'ce qui n'a jamais échoué finira par échouer'. Le chaos engineering révèle les faiblesses avant qu’elles ne causent un incident.", tip:"💡 Commencez par des tests hors production (game days)." },
+    { thematic:"Loi de Murphy", question:"Quel outil de ticket support intègre Murphy ?", options:["Template structuré (environnement, étapes, erreurs)","Texte libre","Chat seulement","Email"], correctAnswer:"Template structuré", explanation:"✅ REX : réduction de 50% des allers-retours. Les tickets vagues font perdre du temps.", tip:"💡 Validation automatique des champs obligatoires." },
+    { thematic:"Loi de Murphy", question:"En base de données, comment parer à la corruption ?", options:["Sauvegardes + tests de restauration + réplication","Une seule sauvegarde","Pas de réplication","Backup manuel"], correctAnswer:"Sauvegardes + tests de restauration + réplication", explanation:"📊 GitHub a perdu des données faute de tests de restauration. Murphy : le disque tombe, la sauvegarde peut être corrompue.", tip:"💡 Automatisez les restaurations hebdomadaires." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce que la redondance active ?", options:["Plusieurs composants en parallèle","Un seul composant","Un en veille","Aucune"], correctAnswer:"Plusieurs composants en parallèle", explanation:"🏆 Les sites comme Google utilisent des clusters actif-actif. Si un serveur tombe, les autres prennent le relais sans interruption.", tip:"💡 Load balancer avec health checks." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les rollbacks automatiques sont-ils cruciaux ?", options:["Retour à l'état précédent sans intervention","Correction manuelle","Attente","Annulation"], correctAnswer:"Retour à l'état précédent sans intervention", explanation:"📊 Un rollback automatisé réduit le MTTR de 80%. Murphy : un déploiement peut mal se passer.", tip:"💡 Testez le rollback en canary (bleu/vert)." },
+    { thematic:"Loi de Murphy", question:"Quel est le 'Murphy des réunions' ?", options:["Le point important sera discuté quand les clés sont absentes","Toujours productives","Tout le monde écoute","Décisions rapides"], correctAnswer:"Le point important sera discuté quand les clés sont absentes", explanation:"✅ REX : partagez l’ordre du jour 48h à l’avance et exigez la présence des décideurs. Les absents ont toujours raison.", tip:"💡 Utilisez le DACI (Driver, Approver, Contributor, Informed)." },
+    { thematic:"Loi de Murphy", question:"Comment Murphy s'applique-t-il à la documentation ?", options:["La doc sera obsolète ou introuvable au moment du besoin","La doc est parfaite","Jamais besoin","Auto-mise à jour"], correctAnswer:"La doc sera obsolète ou introuvable", explanation:"🏆 Solution : documentation as code (mkdocs, Git) et liens automatiques depuis le code. Murphy : les docs ne sont jamais à jour.", tip:"💡 Générez la documentation à partir du code (Swagger, JSDoc)." },
+    { thematic:"Loi de Murphy", question:"Que préconise Murphy pour les vols de données ?", options:["Chiffrement des données sensibles même en interne","Pas de chiffrement","Confiance totale","Audit annuel"], correctAnswer:"Chiffrement des données sensibles même en interne", explanation:"📊 GDPR impose le chiffrement. Un employé malveillant ou un vol de laptop peut arriver.", tip:"💡 Chiffrez les disques et les bases (TDE, TLS)." },
+    { thematic:"Loi de Murphy", question:"Dans un datacenter, comment éviter l'effet domino ?", options:["Isolation des circuits électriques et redondance","Un seul circuit","Groupe électrogène central","Pas de précaution"], correctAnswer:"Isolation des circuits électriques et redondance", explanation:"✅ REX : les gros datacenters ont des A/B feeds. Une panne sur un rack ne doit pas s’étendre.", tip:"💡 Testez les coupures simulées." },
+    { thematic:"Loi de Murphy", question:"Que dit Murphy des tests unitaires ?", options:["Un test qui n'a jamais échoué finira par échouer quand on en aura besoin","Les tests sont inutiles","Un test vert reste vert","Les tests ralentissent"], correctAnswer:"Un test qui n'a jamais échoué finira par échouer", explanation:"🏆 Les flaky tests en CI en sont l’illustration. Un test mal écrit cache un bug.", tip:"💡 Utilisez des tests de non-régression et isolez les tests fragiles." },
+    { thematic:"Loi de Murphy", question:"En matière de planification, le 'Murphy budget' recommande :", options:["Ajouter une réserve de 20-30%","Prévoir au plus juste","Ne pas prévoir","Demander plus"], correctAnswer:"Ajouter une réserve de 20-30%", explanation:"📊 Les coûts cachés apparaissent toujours. Les projets avec réserve dépassent moins souvent.", tip:"💡 Réserve pour aléas (contingency)." },
+    { thematic:"Loi de Murphy", question:"Comment prévenir l'erreur de configuration en production ?", options:["Environnements identiques de dev à prod","Config manuelle","Fichiers séparés","Copier-coller"], correctAnswer:"Environnements identiques de dev à prod", explanation:"✅ Infrastructure as Code (Terraform) garantit l’identité. Murphy : une différence de config causera une panne.", tip:"💡 Utilisez des variables d’environnement versionnées." },
+    { thematic:"Loi de Murphy", question:"Que faire pour éviter qu'une panne mineure ne devienne majeure ?", options:["Monitoring et alertes avec escalade","Ignorer","Intervention humaine","Redémarrer"], correctAnswer:"Monitoring et alertes avec escalade", explanation:"🏆 REX : les alertes proactives sauvent des nuits. Murphy : une panne non détectée s’aggrave.", tip:"💡 Mettez en place de l’observabilité (Prometheus, Grafana)." },
+    { thematic:"Loi de Murphy", question:"Dans un contrat de service, que devrait inclure la clause Murphy ?", options:["Pénalités de disponibilité et plans de reprise","Aucune clause","Paiement en avance","Livraison sans engagement"], correctAnswer:"Pénalités de disponibilité et plans de reprise", explanation:"✅ Les fournisseurs peuvent tomber en panne. Le contrat doit prévoir les conséquences.", tip:"💡 Exigez des rapports de test de reprise (simulation annuelle)." },
+    { thematic:"Loi de Murphy", question:"Quel est le corollaire de Murphy pour les formations ?", options:["La personne qui a besoin de la formation sera absente","Tout le monde sera présent","La formation sera parfaite","Les supports suffisent"], correctAnswer:"La personne qui a besoin de la formation sera absente", explanation:"✅ REX : enregistrez les sessions. Murphy : les absents sont ceux qui en ont le plus besoin.", tip:"💡 Fournissez des vidéos et des quiz de rattrapage." },
+    { thematic:"Loi de Murphy", question:"Comment gérer le 'Murphy des délais' dans un projet ?", options:["Utiliser la méthode PERT","Estimer au plus juste","Ajouter 10%","Ne pas estimer"], correctAnswer:"Utiliser la méthode PERT", explanation:"📊 PERT = (O + 4P + Pe)/6. La moyenne pondérée est plus réaliste.", tip:"💡 Calculez (optimiste + 4*probable + pessimiste)/6." },
+    { thematic:"Loi de Murphy", question:"Que faire si une solution de contournement existe ?", options:["La documenter et l'automatiser","Ne pas en parler","Supprimer le processus","Attendre"], correctAnswer:"La documenter et l'automatiser", explanation:"📊 Murphy : on utilisera le contournement au pire moment. L’automatiser évite l’erreur humaine.", tip:"💡 Transformez le contournement en fonctionnalité native." },
+    { thematic:"Loi de Murphy", question:"En voyage d'affaires, comment appliquer Murphy ?", options:["Scanner les documents + double chargeur","Un seul bagage","Ne pas prévoir","Confier à un collègue"], correctAnswer:"Scanner les documents + double chargeur", explanation:"✅ Perte de passeport, batterie vide. Les copies sauvent.", tip:"💡 Ayez une clé USB avec scans + cloud." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce que le 'Murphy des interfaces' ?", options:["L'utilisateur fera ce qui n'est pas prévu","L'interface est intuitive","Les utilisateurs lisent la doc","Les erreurs sont rares"], correctAnswer:"L'utilisateur fera ce qui n'est pas prévu", explanation:"🏆 Les tests utilisateurs révèlent des chemins inattendus. Murphy : l’utilisateur clique partout.", tip:"💡 Faites des tests d’utilisabilité avec des personnes non formées." },
+    { thematic:"Loi de Murphy", question:"Pourquoi faut-il toujours un plan B ?", options:["Parce que le plan A échouera au pire moment","Le plan A est parfait","Le plan B est inutile","On improvise"], correctAnswer:"Parce que le plan A échouera au pire moment", explanation:"✅ REX : les équipes agiles ont toujours un fallback. Murphy : le premier plan tombera.", tip:"💡 Documentez le fallback et testez-le." },
+    { thematic:"Loi de Murphy", question:"Quel est le principe de 'defense in depth' ?", options:["Multiplier les couches de sécurité","Une seule couche","Pare-feu uniquement","Antivirus seulement"], correctAnswer:"Multiplier les couches de sécurité", explanation:"📊 Les attaques contournent rarement 3 couches (WAF, IDS, chiffrement). Murphy : une couche peut céder.", tip:"💡 Ajoutez du WAF, IDS, chiffrement, et segmentation." },
+    { thematic:"Loi de Murphy", question:"En gestion de crise, que faire 5 minutes après le début ?", options:["Activer le plan de continuité testé","Paniquer","Chercher un responsable","Attendre"], correctAnswer:"Activer le plan de continuité testé", explanation:"🏆 Un plan rodé guide l’action. Murphy : le stress brouille, le plan écrit sauve.", tip:"💡 Faites des exercices réguliers (simulations d’incendie IT)." },
+    { thematic:"Loi de Murphy", question:"Que signifie 'fail fast' dans l'esprit Murphy ?", options:["Échouer rapidement pour corriger tôt","Échouer longtemps","Ne pas échouer","Cacher les échecs"], correctAnswer:"Échouer rapidement pour corriger tôt", explanation:"✅ Murphy : l’échec arrivera de toute façon. Autant qu’il arrive vite pour minimiser l’impact (tests en CI).", tip:"💡 Utilisez des tests unitaires et de l’intégration continue." },
+    { thematic:"Loi de Murphy", question:"Comment réduire le risque de vol de données par clé USB ?", options:["Interdire les ports USB et crypter","Autoriser tout","Ne pas crypter","Surveiller"], correctAnswer:"Interdire les ports USB et crypter", explanation:"📊 DLP (Data Loss Prevention) : interdiction + chiffrement. Murphy : une clé USB sera perdue.", tip:"💡 Utilisez des solutions de DLP et des ports USB verrouillables." },
+    { thematic:"Loi de Murphy", question:"Dans un avion, pourquoi la ceinture doit être attachée même en cas de turbulences rares ?", options:["Parce que la turbulence imprévue arrive quand on ne s'y attend pas","C'est la loi","Pour le confort","Pour le rang"], correctAnswer:"Parce que la turbulence imprévue arrive quand on ne s'y attend pas", explanation:"✅ Murphy : l’événement rare survient quand on est le moins préparé. La ceinture sauve.", tip:"💡 Dans la vie, les 'ceintures' sont les backups et les redondances." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les tests de charge doivent-ils simuler des pics violents ?", options:["Parce que le pic surviendra un jour (Black Friday)","C'est facile","Les serveurs sont puissants","Pour faire joli"], correctAnswer:"Parce que le pic surviendra un jour", explanation:"📊 Murphy : si le système peut être saturé, il le sera lors d’un événement important. Testez à 200%.", tip:"💡 Utilisez des outils comme JMeter ou Locust." },
+    { thematic:"Loi de Murphy", question:"Que faire si un fournisseur externe change son API sans prévenir ?", options:["Mettre des tests de contrat (contract testing)","Changer de fournisseur","Ignorer","Attendre"], correctAnswer:"Mettre des tests de contrat", explanation:"✅ REX : des tests de contrat (Pact) détectent les ruptures tôt. Murphy : le fournisseur changera l’API au pire moment.", tip:"💡 Automatisez les tests de contrat dans le pipeline." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce que le 'principe de la valise' dans les voyages ?", options:["Toujours emporter des affaires de rechange dans le bagage cabine","Ne prendre qu'un bagage","Ne pas prendre de bagage","Voyager léger"], correctAnswer:"Toujours emporter des affaires de rechange dans le bagage cabine", explanation:"✅ Murphy : la valise en soute sera perdue. Les essentiels en cabine sauvent le voyage.", tip:"💡 Mettez une tenue, des médicaments et un chargeur en cabine." },
+    // LOI DE KINDLIN (40 questions)
+    { thematic:"Loi de Kindlin", question:"Un client dit 'votre logiciel est trop lent'. Quelle reformulation Kindlin ?", options:["Quelle opération dépasse quel seuil de temps (ex: >3s) ?","C'est subjectif","Augmentez la bande passante","Changez de navigateur"], correctAnswer:"Quelle opération dépasse quel seuil de temps ?", explanation:"📊 Kindlin : un problème vague ne peut être résolu. Le quantifier (écart observable) le rend actionnable. REX : réduction du temps de résolution de 70%.", tip:"💡 Utilisez des métriques utilisateur réelles (RUM)." },
+    { thematic:"Loi de Kindlin", question:"Une équipe se plaint de 'manque de communication'. Que faire ?", options:["Demander des exemples précis : quel message, à qui, quel impact ?","Plus de réunions","Ajouter un canal Slack","Nommer un responsable com"], correctAnswer:"Demander des exemples précis", explanation:"✅ Kindlin : clarifier le 'quoi, qui, quand' transforme une plainte floue en problème concret. REX : les équipes matures font des 'post‑mortems' sans blame.", tip:"💡 Créez un template 'problème' avec champs obligatoires." },
+    { thematic:"Loi de Kindlin", question:"Comment appliquer Kindlin lors d'un bug non reproductible ?", options:["Noter l'état système, logs et actions avant l'erreur","Changer de techno","Ignorer","Redémarrer"], correctAnswer:"Noter l'état système, logs et actions", explanation:"🏆 Plus le contexte est clair, plus on s'approche de la cause. Les traces (OpenTelemetry) aident à la reproduction.", tip:"💡 Instrumentez avec des traces et un correlation ID." },
+    { thematic:"Loi de Kindlin", question:"Un responsable dit 'l'équipe n'est pas assez productive'. Reformulation Kindlin :", options:["Quels livrables ont pris plus de temps et de combien ?","Ils sont paresseux","Augmentez les primes","Tests psychotechniques"], correctAnswer:"Quels livrables ont pris plus de temps ?", explanation:"📊 Transformation du jugement vague en écart mesurable. Kindlin rend possible un plan d'action (ex: formation sur un outil).", tip:"💡 Utilisez des OKR (Objectives and Key Results)." },
+    { thematic:"Loi de Kindlin", question:"Dans un incident de sécurité, quelle question Kindlin est prioritaire ?", options:["Quelle donnée exfiltrée, par quel vecteur, à quel moment ?","Qui est fautif ?","Coût ?","Démissionner ?"], correctAnswer:"Quelle donnée exfiltrée, par quel vecteur, à quel moment ?", explanation:"✅ Clarifier le périmètre de l'incident permet de concentrer la remédiation. REX : les playbooks de réponse commencent par cette question.", tip:"💡 Ayez un playbook de réponse à incident avec checklist." },
+    { thematic:"Loi de Kindlin", question:"Pourquoi la méthode des '5 pourquoi' est-elle un outil Kindlin ?", options:["Elle remonte à la cause racine","Cinq excuses","Évite de chercher","Ralentit"], correctAnswer:"Elle remonte à la cause racine", explanation:"🏆 Kindlin : chaque 'pourquoi' affine la définition du problème jusqu’à trouver une cause actionnable. REX Toyota.", tip:"💡 Ne vous arrêtez pas aux symptômes – allez jusqu’à la faille système." },
+    { thematic:"Loi de Kindlin", question:"Un commercial dit 'les clients n'achètent pas'. Kindlin l'invite à :", options:["Préciser le segment, l'étape du tunnel, les objections","Baisser les prix","Changer de produit","Plus de prospection"], correctAnswer:"Préciser le segment, l'étape, les objections", explanation:"📊 Le flou empêche l’action. Identifier le goulot exact (ex: abandon sur le prix) permet de tester des hypothèses.", tip:"💡 Analysez les entretiens de vente perdus avec une grille de décodage." },
+    { thematic:"Loi de Kindlin", question:"En gestion de projet, qu'est-ce qu'une 'définition de l'état final' ?", options:["Décrire le résultat avec des critères vérifiables","Objectif vague","Budget","Planning"], correctAnswer:"Décrire le résultat avec des critères vérifiables", explanation:"✅ Kindlin : savoir exactement où l’on veut aller évite les dérives. Exemple : 'Bouton d’achat fonctionne en 3 clics max'.", tip:"💡 Utilisez des 'acceptance criteria' Gherkin (Given/When/Then)." },
+    { thematic:"Loi de Kindlin", question:"Que faire si une réunion part dans tous les sens ?", options:["Rappeler l'objectif précis et recentrer","Laisser faire","Changer de salle","Ajouter des participants"], correctAnswer:"Rappeler l'objectif précis et recentrer", explanation:"🏆 Kindlin appliqué à l’animation : clarifier l’objectif évite les digressions. REX : les réunions efficaces durent 30 minutes.", tip:"💡 Affichez l’ordre du jour et le problème à résoudre." },
+    { thematic:"Loi de Kindlin", question:"Un développeur dit 'c'est complexe'. Comment l'aider ?", options:["Décomposer en sous-problèmes simples","Ajouter des ressources","Changer de langage","Repousser l'échéance"], correctAnswer:"Décomposer en sous-problèmes simples", explanation:"✅ Kindlin : fractionner un problème flou en petites briques clarifiées rend la solution accessible (divide and conquer).", tip:"💡 Utilisez le 'divide and conquer' et le diagramme de séquence." },
+    { thematic:"Loi de Kindlin", question:"Quel document oblige à clarifier un besoin avant développement ?", options:["User story avec critères d'acceptation","Diagramme de Gantt","Compte-rendu","Contrat"], correctAnswer:"User story avec critères d'acceptation", explanation:"📊 Une user story sans critères clairs est source d’ambiguïté. Kindlin exige des exemples concrets (BDD).", tip:"💡 Adoptez le BDD (Behavior Driven Development) avec Cucumber." },
+    { thematic:"Loi de Kindlin", question:"Un problème récurrent dans le support technique est souvent dû à :", options:["Description imprécise du symptôme","Matériel obsolète","Bug connu","Formation insuffisante"], correctAnswer:"Description imprécise", explanation:"🏆 Kindlin : le temps perdu vient d’une information floue. Forcer la précision (template) réduit le MTTR de 50%.", tip:"💡 Fournissez un formulaire avec champs contextuels (OS, version, étapes)." },
+    { thematic:"Loi de Kindlin", question:"Dans un audit qualité, comment appliquer Kindlin ?", options:["Définir des critères objectifs (ex: taux d'erreur <1%)","Dire 'c'est mauvais'","Rapport vague","Attendre"], correctAnswer:"Définir des critères objectifs", explanation:"✅ Un audit sans métrique précise n’aboutit à rien. Kindlin exige des seuils mesurables.", tip:"💡 Utilisez des OKR qualité (ex: 99% de conformité)." },
+    { thematic:"Loi de Kindlin", question:"Un chef de produit dit 'les utilisateurs n'aiment pas la nouvelle feature'. Reformulation :", options:["Quelle métrique d'engagement a baissé et de combien ?","Ils ont tort","C'est subjectif","Sondage"], correctAnswer:"Quelle métrique d'engagement a baissé ?", explanation:"📊 Un ressenti ne peut être traité. Une métrique (ex: -30% de clics) permet une décision objective.", tip:"💡 Mesurez avant/après avec des A/B tests." },
+    { thematic:"Loi de Kindlin", question:"Comment clarifier un objectif stratégique flou ?", options:["Le transformer en sous-objectifs SMART","Laisser flou","Ajouter ressources","Changer d'objectif"], correctAnswer:"SMART", explanation:"🏆 Kindlin : un objectif SMART (Spécifique, Mesurable, Atteignable, Réaliste, Temporel) est à moitié atteint.", tip:"💡 Écrivez chaque objectif en une phrase, avec un indicateur." },
+    { thematic:"Loi de Kindlin", question:"En réunion de crise, quelle première question poser ?", options:["Quel est l'écart entre la situation actuelle et l'objectif ?","Qui a fauté ?","Quand sera-ce fini ?","Coût ?"], correctAnswer:"Quel est l'écart ?", explanation:"✅ Kindlin recentre sur le problème réel, pas sur les personnes. REX : les équipes matures commencent par 'état actuel vs cible'.", tip:"💡 Affichez l’écart sur un tableau blanc." },
+    { thematic:"Loi de Kindlin", question:"Un feedback d'utilisateur : 'l'interface est moche'. Que faire ?", options:["Demander quels éléments précis (couleurs, espacement)","Changer toute l'interface","Ignorer","Sondage"], correctAnswer:"Demander quels éléments précis", explanation:"📊 Kindlin : 'moche' n’est pas actionnable. 'Boutons trop petits' l’est. REX : recueillir des métriques de satisfaction par attribut.", tip:"💡 Utilisez des maquettes annotées avec des zones à critiquer." },
+    { thematic:"Loi de Kindlin", question:"Dans un processus de vente, où se situe le goulot ?", options:["Mesurer le taux de conversion à chaque étape","Demander à l'équipe","Chiffre global","Attendre"], correctAnswer:"Mesurer le taux de conversion à chaque étape", explanation:"🏆 Kindlin : sans mesure étape par étape, on ne peut pas améliorer. REX : entonnoir de conversion.", tip:"💡 Utilisez un CRM avec des pipelines visuels." },
+    { thematic:"Loi de Kindlin", question:"Un développeur dit 'il y a un bug' mais ne peut pas le reproduire. Kindlin conseille :", options:["Demander la liste exacte des actions, l'environnement, les logs","Changer de poste","Ignorer","Redémarrer"], correctAnswer:"Demander la liste exacte", explanation:"✅ Kindlin : la reproductibilité dépend de la clarté des conditions. REX : les logs structurés (JSON) aident.", tip:"💡 Ajoutez des captures d’écran et des har(HTTP)." },
+    { thematic:"Loi de Kindlin", question:"Pourquoi les checklistes sont-elles un outil Kindlin ?", options:["Elles listent les étapes et évitent les oublis","Elles sont longues","Elles ralentissent","Inutiles"], correctAnswer:"Elles listent les étapes", explanation:"📊 Kindlin : clarifier chaque étape d’un processus garantit qu’aucune n’est oubliée. REX : checklist en chirurgie a réduit la mortalité de 40%.", tip:"💡 Créez des checklists pour les tâches critiques (déploiement, urgence)." },
+    { thematic:"Loi de Kindlin", question:"Un manager dit 'le moral est bas'. Kindlin demande :", options:["Quels comportements observables sont différents ? (absentéisme, retard)","Baby-foot","Prime","Changer d'équipe"], correctAnswer:"Comportements observables", explanation:"🏆 Un ressenti vague ne peut être traité. Des faits mesurables (ex: absentéisme +10%) le peuvent.", tip:"💡 Surveillez les indicateurs RH (taux de turnover, satisfaction)." },
+    { thematic:"Loi de Kindlin", question:"En négociation, comment clarifier un désaccord ?", options:["Lister les points d'accord et désaccord avec des faits","Crier","Quitter","Menacer"], correctAnswer:"Lister points d'accord/désaccord", explanation:"✅ Kindlin : la clarification désamorce les conflits émotionnels. REX : les médiateurs utilisent cette technique.", tip:"💡 Utilisez un tableau blanc partagé pour écrire les positions." },
+    { thematic:"Loi de Kindlin", question:"Un test fonctionnel échoue sans message clair. Kindlin dit :", options:["Ajouter des assertions et des logs explicites","Ignorer","Relancer","Changer de test"], correctAnswer:"Ajouter des assertions et logs", explanation:"📊 Un échec doit être clair : 'attendu 5, obtenu 3'. Kindlin rend le test utile. REX : tests BDD avec Scénarios.", tip:"💡 Écrivez des messages d'assertion en français (Assert.AreEqual)." },
+    { thematic:"Loi de Kindlin", question:"Dans une analyse de risque, comment clarifier un risque ?", options:["Probabilité, impact, déclencheur, plan","Risque vague","Peut-être","On verra"], correctAnswer:"Probabilité, impact, déclencheur", explanation:"✅ Kindlin : un risque non qualifié ne peut être géré. Matrice probabilité/impact.", tip:"💡 Utilisez une matrice probabilité/impact avec valeurs numériques." },
+    { thematic:"Loi de Kindlin", question:"Un client dit 'c'est trop cher'. Kindlin reformule :", options:["Comparé à quoi ? Quel budget ?","C'est le prix","Vous avez tort","Réduisez"], correctAnswer:"Comparé à quoi ? Quel budget ?", explanation:"📊 'Trop cher' est subjectif. Le comparatif et le budget cible clarifient. REX : ventes complexes.", tip:"💡 Proposez une gamme de prix (entrée, milieu, premium)." },
+    { thematic:"Loi de Kindlin", question:"En revue de code, un commentaire 'ce code est moche' est inutile. Kindlin propose :", options:["Nommer le pattern à améliorer (duplication, nommage)","Supprimer","Ignorer","Réécrire"], correctAnswer:"Nommer le pattern", explanation:"🏆 Kindlin : un problème spécifique se corrige. 'Moche' non. Exemple : 'ce bloc est dupliqué 3 fois, extrayez une fonction'.", tip:"💡 Utilisez des linters (ESLint, SonarQube) pour automatiser." },
+    { thematic:"Loi de Kindlin", question:"Pourquoi la méthode STAR (Situation, Tâche, Action, Résultat) est-elle Kindlin ?", options:["Elle force à décrire un contexte complet","Elle est longue","Inutile","Remplace l'action"], correctAnswer:"Contexte complet", explanation:"✅ STAR clarifie chaque élément et évite les malentendus. REX : recrutement et rapports d’incident.", tip:"💡 Utilisez STAR pour les rapports d’incident (post‑mortem)." },
+    { thematic:"Loi de Kindlin", question:"Un architecte dit 'le système est trop couplé'. Kindlin attend :", options:["Quels modules échangent trop de messages ?","Refactorer tout","Ajouter un bus","Changer de langage"], correctAnswer:"Quels modules échangent trop ?", explanation:"📊 Kindlin : sans cibler les couplages précis, on ne peut pas découpler. REX : analyse de dépendances avec outil.", tip:"💡 Utilisez des outils d’analyse de dépendances (JDepend, Structure101)." },
+    { thematic:"Loi de Kindlin", question:"En onboarding, comment clarifier les attentes ?", options:["Documenter les responsabilités et livrables 30 jours","Laisser faire","Formation générale","Attendre"], correctAnswer:"Documenter responsabilités et livrables", explanation:"🏆 Un nouvel employé a besoin de clarté. Kindlin évite la confusion. REX : les 30‑60‑90 jours plans.", tip:"💡 Créez une checklist d’onboarding avec des objectifs hebdomadaires." },
+    { thematic:"Loi de Kindlin", question:"Un test A/B donne des résultats non significatifs. Kindlin propose :", options:["Revoir taille échantillon et effet minimum détectable","Changer de test","Attendre","Arrêter"], correctAnswer:"Revoir taille échantillon", explanation:"✅ Kindlin : sans définir l’effet attendu et la puissance, on ne peut pas interpréter. REX : calculateur de taille d’échantillon.", tip:"💡 Utilisez un calculateur de taille d’échantillon (Evan’s Awesome A/B Tools)." },
+    { thematic:"Loi de Kindlin", question:"Un incident de sécurité est signalé comme 'grave'. Kindlin demande :", options:["Périmètre exact (serveurs, données) et heure de début","C'est grave","Fermer tout","Prévenir RGPD"], correctAnswer:"Périmètre exact et heure", explanation:"📊 La gravité est vague. La clarification guide la réponse. REX : les SOC commencent par le scope.", tip:"💡 Ayez un formulaire d’incident avec champs 'systèmes impactés' et 'timestamp'." },
+    { thematic:"Loi de Kindlin", question:"En maintenance, une panne est décrite comme 'l'application ne répond plus'. Kindlin dit :", options:["Quelle action utilisateur, écran, erreur dans les logs ?","Redémarrer","Réinstaller","Changer serveur"], correctAnswer:"Quelle action utilisateur, écran, logs ?", explanation:"🏆 'Ne répond plus' peut avoir 100 causes. Les logs et le contexte précisent. REX : centralisation des logs.", tip:"💡 Centralisez les logs (ELK, Loki) avec des IDs de trace." },
+    { thematic:"Loi de Kindlin", question:"Un sportif dit 'je n'arrive pas à progresser'. Kindlin conseille :", options:["Mesurer une grandeur (temps, distance) et comparer à un objectif","S'entraîner plus","Changer de sport","Coach"], correctAnswer:"Mesurer une grandeur", explanation:"✅ La progression est floue sans métrique. Kindlin la rend tangible. REX : les sportifs de haut niveau utilisent des KPIs.", tip:"💡 Fixez des KPIs personnels (ex: temps sur 5 km)." },
+    { thematic:"Loi de Kindlin", question:"En réunion de projet, on dit 'il y a un risque de retard'. Kindlin demande :", options:["Quelle tâche, retard en jours, dates prévue vs réelle ?","Qui est responsable ?","Ajouter ressources","Travailler plus"], correctAnswer:"Quelle tâche, retard en jours, dates ?", explanation:"📊 Un retard sans quantification ne peut être rattrapé. REX : diagramme de Gantt avec lignes de base.", tip:"💡 Utilisez un diagramme de Gantt avec colonne 'écart'." },
+    { thematic:"Loi de Kindlin", question:"Un client demande 'améliorez la performance'. Kindlin veut :", options:["Un objectif en ms ou RPS sur un scénario type","Plus de mémoire","Changer de langage","Ajouter caches"], correctAnswer:"Un objectif en ms ou RPS", explanation:"🏆 Sans cible, on ne sait pas quand s’arrêter. Kindlin exige un seuil. REX : les SLO (Service Level Objectives).", tip:"💡 Définissez des SLO (ex: 95% des requêtes < 200ms)." },
+    { thematic:"Loi de Kindlin", question:"Dans un code legacy, 'ce code est un spaghetti' est vague. Kindlin propose :", options:["Identifier cycles de dépendances et longueur des fonctions","Réécrire tout","Ajouter commentaires","Changer langage"], correctAnswer:"Identifier cycles et longueur", explanation:"✅ Kindlin : cibler des métriques (complexité cyclomatique, couplage) rend la refactorisation possible. REX : SonarQube.", tip:"💡 Utilisez SonarQube pour mesurer la dette technique." },
+    { thematic:"Loi de Kindlin", question:"Un service après-vente dit 'les clients ne sont pas satisfaits'. Kindlin demande :", options:["Quel est le NPS et les principales réclamations ?","Réduire prix","Offrir cadeaux","Changer produit"], correctAnswer:"NPS et réclamations", explanation:"📊 La satisfaction est quantifiable (NPS, CSAT). Kindlin transforme un ressenti en données.", tip:"💡 Faites des enquêtes régulières avec une question ouverte 'Qu’est‑ce qui vous déçoit ?'." },
+    { thematic:"Loi de Kindlin", question:"Pourquoi le 'Problem Statement Canvas' est-il un outil Kindlin ?", options:["Il structure problème, parties prenantes, critères de succès","Il est joli","Il est long","Remplace solution"], correctAnswer:"Structure problème, parties prenantes", explanation:"🏆 Kindlin : un problème bien encadré est résolu plus vite. REX : design thinking.", tip:"💡 Utilisez-le en atelier avec des post‑its." },
+    { thematic:"Loi de Kindlin", question:"Un responsable logistique dit 'les livraisons sont en retard'. Kindlin demande :", options:["Quel entrepôt, tournée, écart en heures ?","Changer transporteur","Ajouter camions","Attendre"], correctAnswer:"Quel entrepôt, tournée, écart ?", explanation:"✅ 'Retard' sans localisation ni mesure empêche l’action. REX : tableau de bord temps réel.", tip:"💡 Utilisez un tableau de bord avec alertes par seuil." }
+];
+console.assert(FULL_QUESTIONS.length === 80, "Nombre de questions : " + FULL_QUESTIONS.length);
+
+// LOGIQUE DU QUIZ
+let currentIndex = 0, score = 0, userAnswers = [], questionsList = [], selectedCount = 40;
+const settingsPanel = document.getElementById('settings-panel');
+const quizContent = document.getElementById('quiz-content');
+const startBtn = document.getElementById('start-quiz-btn');
+const nextBtn = document.getElementById('next-btn');
+const prevBtn = document.getElementById('prev-btn');
+const finishBtn = document.getElementById('finish-btn');
+const questionCounter = document.getElementById('question-counter');
+const currentScoreSpan = document.getElementById('current-score');
+const progressBar = document.getElementById('progress-bar');
+const questionText = document.getElementById('question-text');
+const thematicBadge = document.getElementById('thematic-badge');
+const optionsDiv = document.getElementById('options-container');
+const feedbackBox = document.getElementById('feedback-box');
+const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+const restartBtn = document.getElementById('restart-quiz-btn');
+
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+function startQuiz() {
+    selectedCount = parseInt(document.getElementById('question-count').value);
+    let all = [...FULL_QUESTIONS];
+    if (all.length < selectedCount) selectedCount = all.length;
+    questionsList = shuffle(all).slice(0, selectedCount);
+    currentIndex = 0; score = 0; userAnswers = new Array(questionsList.length).fill(null);
+    settingsPanel.classList.add('d-none'); quizContent.classList.remove('d-none');
+    displayQuestion(0); updateScore();
+}
+
+function updateScore() { currentScoreSpan.innerText = `Score: ${score}/${questionsList.length}`; }
+
+function displayQuestion(index) {
+    feedbackBox.classList.add('d-none');
+    const q = questionsList[index];
+    questionText.innerText = q.question;
+    thematicBadge.innerText = q.thematic;
+    thematicBadge.className = 'thematic-badge ' + (q.thematic.includes('Murphy') ? 'badge-murphy' : 'badge-kindlin');
+    optionsDiv.innerHTML = '';
+    const shuffledOpts = shuffle([...q.options]);
+    shuffledOpts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt; btn.className = 'btn option-btn';
+        btn.onclick = () => selectAnswer(btn, opt, index);
+        optionsDiv.appendChild(btn);
+    });
+    if (userAnswers[index]) showFeedback(index);
+    const progress = ((index + 1) / questionsList.length) * 100;
+    progressBar.style.width = `${progress}%`;
+    questionCounter.innerText = `Question ${index + 1} / ${questionsList.length}`;
+    prevBtn.disabled = index === 0;
+    nextBtn.classList.toggle('d-none', index === questionsList.length - 1);
+    finishBtn.classList.toggle('d-none', index !== questionsList.length - 1);
+}
+
+function selectAnswer(btn, selected, idx) {
+    if (userAnswers[idx] !== null) return;
+    const q = questionsList[idx];
+    const isCorrect = (selected === q.correctAnswer);
+    if (isCorrect) score++;
+    userAnswers[idx] = { selected, correct: q.correctAnswer, isCorrect };
+    updateScore();
+    // Appliquer les couleurs vert/rouge sur les boutons
+    document.querySelectorAll('.option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.innerText === q.correctAnswer) b.classList.add('correct');
+        if (b.innerText === selected && !isCorrect) b.classList.add('incorrect');
+    });
+    showFeedback(idx);
+}
+
+function showFeedback(idx) {
+    const ua = userAnswers[idx]; if (!ua) return;
+    const q = questionsList[idx];
+    const isUserCorrect = ua.isCorrect;
+    const correctAnswerText = q.correctAnswer;
+    const feedbackHtml = `
+        <div class="${isUserCorrect ? 'feedback-correct' : 'feedback-incorrect'} p-3 rounded">
+            <h5>${isUserCorrect ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}</h5>
+            <p><strong>La bonne réponse était :</strong> ${correctAnswerText}</p>
+            <p><strong>📖 Explication détaillée :</strong> ${q.explanation}</p>
+            <div class="tip-box"><strong>💡 Conseil pratique / REX :</strong> ${q.tip}</div>
+        </div>
+    `;
+    feedbackBox.innerHTML = feedbackHtml;
+    feedbackBox.classList.remove('d-none');
+}
+
+function handleNext() { if (currentIndex < questionsList.length - 1) { currentIndex++; displayQuestion(currentIndex); } }
+function handlePrev() { if (currentIndex > 0) { currentIndex--; displayQuestion(currentIndex); } }
+
+function showFinal() {
+    const percent = (score / questionsList.length) * 100;
+    let murphyCount = questionsList.filter(q => q.thematic.includes('Murphy')).length;
+    let kindlinCount = questionsList.filter(q => q.thematic.includes('Kindlin')).length;
+    let murphyScore = 0, kindlinScore = 0;
+    questionsList.forEach((q, i) => {
+        if (q.thematic.includes('Murphy') && userAnswers[i]?.isCorrect) murphyScore++;
+        if (q.thematic.includes('Kindlin') && userAnswers[i]?.isCorrect) kindlinScore++;
+    });
+    let murphyPercent = murphyCount ? (murphyScore / murphyCount) * 100 : 0;
+    let kindlinPercent = kindlinCount ? (kindlinScore / kindlinCount) * 100 : 0;
+    document.getElementById('murphy-skill').style.width = `${murphyPercent}%`;
+    document.getElementById('kindlin-skill').style.width = `${kindlinPercent}%`;
+    document.getElementById('murphy-text').innerText = `Murphy : ${murphyPercent.toFixed(0)}% (${murphyScore}/${murphyCount})`;
+    document.getElementById('kindlin-text').innerText = `Kindlin : ${kindlinPercent.toFixed(0)}% (${kindlinScore}/${kindlinCount})`;
+    document.getElementById('final-score-correct').innerText = score;
+    document.getElementById('final-score-total').innerText = questionsList.length;
+    document.getElementById('final-score-percentage').innerText = `${percent.toFixed(0)}%`;
+    let recos = percent >= 80 ? "Excellent ! Vous anticipez et clarifiez comme un pro." : percent >= 60 ? "Bon niveau, ciblez les axes faibles." : "Reprenez les fiches des lois et pratiquez avec des cas concrets.";
+    document.getElementById('final-recommendations').innerHTML = `<h6>🎯 Synthèse</h6><p>${recos}</p>`;
+    document.getElementById('short-term').innerHTML = "<i class='fas fa-check-circle'></i> Appliquez une loi par semaine avec un cas concret.";
+    document.getElementById('long-term').innerHTML = "<i class='fas fa-chart-line'></i> Devenez référent en résilience et clarté dans votre équipe.";
+    resultsModal.show();
+}
+
+function restart() { settingsPanel.classList.remove('d-none'); quizContent.classList.add('d-none'); resultsModal.hide(); }
+
+startBtn.addEventListener('click', startQuiz);
+nextBtn.addEventListener('click', handleNext);
+prevBtn.addEventListener('click', handlePrev);
+finishBtn.addEventListener('click', showFinal);
+restartBtn.addEventListener('click', restart);
+</script>
+</body>
+</html>

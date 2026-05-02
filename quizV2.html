@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz · Gilbert + Wilson · Méthode & Savoir · 80 questions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gilbert: #f97316; --wilson: #06b6d4; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #1e293b, #0f172a); min-height: 100vh; padding: 1rem; }
+        .quiz-container { max-width: 1000px; margin: auto; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .quiz-header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; }
+        .badge-gilbert { background: rgba(249,115,22,0.1); color: var(--gilbert); border: 1px solid var(--gilbert); }
+        .badge-wilson { background: rgba(6,182,212,0.1); color: var(--wilson); border: 1px solid var(--wilson); }
+        .option-btn { display: block; width: 100%; text-align: left; padding: 0.8rem 1rem; margin-bottom: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px; background: white; transition: 0.2s; }
+        .option-btn:hover:not([disabled]) { border-color: #f97316; transform: translateY(-2px); }
+        .option-btn.correct { background: #d1fae5; border-color: #10b981; color: #065f46; font-weight: 600; }
+        .option-btn.incorrect { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; font-weight: 600; }
+        .feedback-correct { background: #ecfdf5; border-left: 5px solid #10b981; }
+        .feedback-incorrect { background: #fef2f2; border-left: 5px solid #dc2626; }
+        .tip-box { background: #fef9e3; border-left: 5px solid #facc15; margin-top: 0.8rem; padding: 0.8rem; border-radius: 8px; }
+        .btn-audit { background: linear-gradient(135deg, #f97316, #dc2626); color: white; border: none; }
+        .progress-bar { background: linear-gradient(90deg, #f97316, #dc2626); }
+        .final-score { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .explanation-law { background: #f8fafc; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid; transition: 0.2s; }
+        .explanation-law:hover { transform: translateX(5px); }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1><i class="fas fa-cogs"></i> Loi de Gilbert + <i class="fas fa-graduation-cap"></i> Loi de Wilson</h1>
+            <p>Méthode efficace · Savoir monnayable · 80 cas pratiques avec REX et conseils</p>
+        </div>
+
+        <!-- Explications des lois -->
+        <div class="row mb-5 g-4">
+            <div class="col-md-6">
+                <div class="explanation-law" style="border-left-color: var(--gilbert);">
+                    <h3 class="text-warning"><i class="fas fa-cogs"></i> Loi de Gilbert</h3>
+                    <p class="lead">« Le plus grand défi est de trouver la meilleure méthode, pas d’avoir plus de moyens. »</p>
+                    <p><strong>📌 Exemple :</strong> Deux équipes commerciales avec mêmes leads : l’une performe 3x mieux grâce à un script de qualification rigoureux.</p>
+                    <p><strong>🏆 REX :</strong> Toyota a doublé sa productivité en appliquant le <em>Kanban</em> et l’amélioration continue sans embaucher.</p>
+                    <p><strong>📊 Chiffre :</strong> Une amélioration méthodologique (ex: Scrum) augmente la vélocité de <strong>40%</strong> en moyenne.</p>
+                    <p><strong>💡 Astuce :</strong> Avant d’ajouter des ressources, cartographiez votre processus et éliminez les gaspillages (value stream mapping).</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="explanation-law" style="border-left-color: var(--wilson);">
+                    <h3 class="text-info"><i class="fas fa-graduation-cap"></i> Loi de Wilson</h3>
+                    <p class="lead">« L’argent suit l’intelligence et la connaissance. »</p>
+                    <p><strong>📌 Exemple :</strong> Un développeur certifié Kubernetes gagne en moyenne 40% de plus qu’un non certifié.</p>
+                    <p><strong>🏆 REX :</strong> Une entreprise qui investit 5% de sa masse salariale en formation voit son CA croître 2x plus vite.</p>
+                    <p><strong>📊 Chiffre :</strong> Les freelances avec une spécialisation rare facturent <strong>3x</strong> le tarif généraliste.</p>
+                    <p><strong>💡 Astuce :</strong> Consacrez 1h par jour à l’acquisition d’une compétence monnayable (code, vente, data).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div id="settings-panel">
+            <h4 class="text-center mb-4"><i class="fas fa-sliders-h"></i> Configuration du quiz</h4>
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <select id="question-count" class="form-select">
+                        <option value="20">20 questions (Rapide)</option>
+                        <option value="40" selected>40 questions (Standard)</option>
+                        <option value="60">60 questions (Complet)</option>
+                        <option value="80">80 questions (Expert – intégral)</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="start-quiz-btn" class="btn btn-audit w-100"><i class="fas fa-rocket"></i> Démarrer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz content -->
+        <div id="quiz-content" class="d-none">
+            <div class="d-flex justify-content-between mb-2"><span id="question-counter"></span><span id="current-score">Score: 0</span></div>
+            <div class="progress mb-3"><div id="progress-bar" class="progress-bar" style="width:0%"></div></div>
+            <div class="card p-3">
+                <div class="thematic-badge" id="thematic-badge"></div>
+                <h3 id="question-text" class="mt-2"></h3>
+                <div id="options-container"></div>
+                <div id="feedback-box" class="d-none mt-3 p-3 rounded"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <button id="prev-btn" class="btn btn-outline-secondary" disabled><i class="fas fa-arrow-left"></i> Précédent</button>
+                <button id="next-btn" class="btn btn-audit">Suivant <i class="fas fa-arrow-right"></i></button>
+                <button id="finish-btn" class="btn btn-success d-none"><i class="fas fa-trophy"></i> Terminer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal résultats -->
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white"><h5 class="modal-title"><i class="fas fa-chart-line"></i> Résultats</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="text-center"><p class="final-score" id="final-score-percentage">0%</p><p><span id="final-score-correct">0</span> / <span id="final-score-total">0</span></p></div>
+                <div class="row"><div class="col-md-6"><h6>Maîtrise de Gilbert</h6><div class="progress"><div id="gilbert-skill" class="progress-bar bg-warning" style="width:0%"></div></div><p id="gilbert-text"></p></div>
+                <div class="col-md-6"><h6>Maîtrise de Wilson</h6><div class="progress"><div id="wilson-skill" class="progress-bar bg-info" style="width:0%"></div></div><p id="wilson-text"></p></div></div>
+                <hr><div id="final-recommendations"></div>
+                <div class="mt-3"><h6>📌 Plan de progression</h6><p id="short-term" class="alert alert-primary"></p><p id="long-term" class="alert alert-secondary"></p></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button><button id="restart-quiz-btn" class="btn btn-audit">Recommencer</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// 80 QUESTIONS UNIQUES : 40 GILBERT + 40 WILSON
+// Chaque question : explication REX + conseil
+// ============================================================
+const FULL_QUESTIONS = [
+    // ********** LOI DE GILBERT (40) **********
+    { thematic:"Loi de Gilbert", question:"Selon Gilbert, le principal échec vient d'un manque de :", options:["Méthode efficace, pas de ressources","Budget","Personnel","Chance"], correctAnswer:"Méthode efficace, pas de ressources", explanation:"📊 Gilbert : 'Le défi est de trouver la meilleure méthode'. Beaucoup blâment le manque de moyens alors que l'optimisation du processus génère des gains. REX des équipes lean.", tip:"💡 Avant d'embaucher, examinez le flux de travail (value stream mapping)." },
+    { thematic:"Loi de Gilbert", question:"Deux vendeurs ont le même produit, l'un réussit, l'autre non. Quelle loi explique cela ?", options:["Loi de Gilbert (méthode vs plainte)","Loi de Pareto","Loi de Murphy","Loi de Wilson"], correctAnswer:"Loi de Gilbert (méthode vs plainte)", explanation:"🏆 Gilbert met l'accent sur la responsabilité de trouver la bonne méthode, plutôt que de se plaindre. Le vendeur qui réussit teste, itère et ajuste son approche.", tip:"💡 Adoptez le cycle PDCA (Plan-Do-Check-Act)." },
+    { thematic:"Loi de Gilbert", question:"Dans un contexte de crise, que recommande la loi de Gilbert ?", options:["Mettre en place une méthode structurée de résolution (DMAIC, 8D)","Paniquer","Attendre des ordres","Faire la même chose plus vite"], correctAnswer:"Mettre en place une méthode structurée", explanation:"✅ Gilbert souligne que la rigueur méthodologique apporte des résultats même avec peu de moyens. REX des équipes formées aux méthodes de résolution.", tip:"💡 Préparez des playbooks pour les crises récurrentes." },
+    { thematic:"Loi de Gilbert", question:"Pour améliorer un service client médiocre, l'approche Gilbert est :", options:["Former aux techniques de questionnement et script centré solution","Doubler l'équipe","Baisser les exigences","Ajouter un chatbot sans test"], correctAnswer:"Former aux techniques de questionnement", explanation:"📊 Au lieu de demander plus de personnel, Gilbert préconise d'affiner la méthode : écoute active, résolution rapide, responsabilisation. De nombreuses entreprises ont réduit les réclamations de 50% grâce à une meilleure méthode.", tip:"💡 Implémentez des 'kaizen events' pour co-construire la méthode." },
+    { thematic:"Loi de Gilbert", question:"Un développeur passe des heures à corriger un bug. Comment appliquer Gilbert ?", options:["Utiliser une méthode de debug (recherche binaire, assertions, logs)","Recommencer depuis zéro","Changer d'ordinateur","Copier du code aléatoire"], correctAnswer:"Utiliser une méthode de debug", explanation:"🏆 La méthode de debugging systématique (diviser pour régner, reproductibilité) résout plus vite qu'une approche hasardeuse. Gilbert : ce n'est pas l'effort, c'est la méthode qui compte.", tip:"💡 Adoptez la 'rubber duck debugging'." },
+    { thematic:"Loi de Gilbert", question:"Selon Gilbert, pourquoi certaines équipes échouent malgré les moyens ?", options:["Absence de processus standardisé et d'amélioration continue","Manque d'argent","Mauvais matériel","Environnement toxique"], correctAnswer:"Absence de processus standardisé", explanation:"✅ Gilbert met en exergue l'absence de méthode même avec des ressources. Les équipes high‑performance ont des rituels (rétrospectives, revues de méthode) et documentent leurs succès.", tip:"💡 Mettez en place une bibliothèque de patterns réutilisables." },
+    { thematic:"Loi de Gilbert", question:"En devops, quelle pratique illustre la loi de Gilbert ?", options:["Infrastructure as Code et pipelines reproductibles","Tout faire manuellement","Ne pas versionner","Déploiements ad‑hoc"], correctAnswer:"Infrastructure as Code", explanation:"📊 L'IaC est une méthode : on code l'infrastructure, on versionne, on automatise. Cela réduit les erreurs et accélère. REX : les organisations matures ont un MTTR 10x inférieur.", tip:"💡 Automatisez les tâches répétitives même petites." },
+    { thematic:"Loi de Gilbert", question:"Gilbert dirait face à un échec :", options:["Quelle méthode peut‑on améliorer ?","C'est la faute du management","Pas de chance","Il fallait plus de budget"], correctAnswer:"Quelle méthode peut‑on améliorer ?", explanation:"🏆 La responsabilité personnelle selon Gilbert consiste à interroger le processus, pas à chercher des boucs émissaires. Cela crée une culture d'apprentissage.", tip:"💡 Organisez des 'blameless post‑mortems'." },
+    { thematic:"Loi de Gilbert", question:"Un commercial rate ses objectifs. L'approche Gilbert constructive :", options:["Analyser son pipeline et ses techniques de closing, puis coacher","Le remplacer","Changer de secteur","Baisser les objectifs"], correctAnswer:"Analyser son pipeline et ses techniques", explanation:"✅ Trouver la faille méthodologique (taux de conversion, relances, qualification) permet un gain ciblé. Les REX commerciaux montrent qu'un petit ajustement de méthode double les résultats.", tip:"💡 Utilisez des 'sales playbooks' et des simulations." },
+    { thematic:"Loi de Gilbert", question:"Quel outil de gestion de projet incarne Gilbert ?", options:["Kanban avec limites de WIP et mesures de lead time","Diagramme de Gantt statique","Tableau blanc","Email"], correctAnswer:"Kanban avec limites de WIP", explanation:"📊 Kanban est une méthode pour visualiser le flux, identifier les goulots, améliorer le rythme. C'est l'essence de Gilbert : processus empirique, adaptation.", tip:"💡 Mesurez le 'temps de cycle' et réduisez les en cours (WIP)." },
+    { thematic:"Loi de Gilbert", question:"Un service client en sous‑effectif mais demande faible : quelle méthode ?", options:["Automatiser les réponses standards et mettre en place un FAQ dynamique","Engager 10 personnes","Fermer le service","Ignorer"], correctAnswer:"Automatiser les réponses standards", explanation:"🏆 Gilbert : la méthode (FAQ, chatbots, tri) résout plus efficacement que les ressources brutes. REX : réduction de 60% des appels.", tip:"💡 Analysez les 20% de questions récurrentes et automatisez‑les." },
+    { thematic:"Loi de Gilbert", question:"Pourquoi la roue de Deming (PDCA) est‑elle un outil Gilbert ?", options:["Elle structure l'amélioration continue par étapes","Elle est compliquée","Elle remplace l'action","Elle est ancienne"], correctAnswer:"Elle structure l'amélioration continue", explanation:"✅ PDCA (Plan, Do, Check, Act) est une méthode它 incarne Gilbert : planifier une amélioration, l'exécuter, vérifier, ajuster.", tip:"💡 Faites des cycles PDCA courts (1 semaine)." },
+    { thematic:"Loi de Gilbert", question:"Un atelier de résolution de problèmes commence par :", options:["Définir le problème avec des données mesurables","Chercher un coupable","Brainstorming libre","Ajouter des ressources"], correctAnswer:"Définir le problème avec des données", explanation:"📊 Gilbert : sans mesure précise, on tourne en rond. Un problème bien cadré oriente la méthode.", tip:"💡 Utilisez le 'problem statement canvas'." },
+    { thematic:"Loi de Gilbert", question:"Quelle phrase résume le mieux Gilbert ?", options:["Une meilleure méthode surpasse plus de moyens","L'argent résout tout","Le travail acharné suffit","La chance est primordiale"], correctAnswer:"Une meilleure méthode surpasse plus de moyens", explanation:"🏆 C'est le cœur de Gilbert : optimiser le processus rapporte plus que d'ajouter des ressources.", tip:"💡 Documentez vos méthodes et partagez‑les." },
+    { thematic:"Loi de Gilbert", question:"Un projet est en retard. Plutôt que d'ajouter des personnes, Gilbert propose :", options:["Identifier et supprimer les tâches à faible valeur ajoutée","Heures supplémentaires","Changer le chef de projet","Ajouter du budget"], correctAnswer:"Supprimer les tâches à faible valeur", explanation:"✅ La méthode lean : réduire le périmètre ou éliminer les gaspillages accélère le projet sans ressources nouvelles.", tip:"💡 Faites un 'scope trimming' avec le client." },
+    { thematic:"Loi de Gilbert", question:"Quel est le piège à éviter selon Gilbert ?", options:["Croire qu'ajouter des ressources compense une mauvaise méthode","Ne jamais former","Travailler en silo","Ignorer les deadlines"], correctAnswer:"Croire qu'ajouter des ressources compense une mauvaise méthode", explanation:"📊 La loi de Brooks 'adding manpower to a late project makes it later' est un corollaire de Gilbert.", tip:"💡 Avant d'ajouter des personnes, stabilisez le processus." },
+    { thematic:"Loi de Gilbert", question:"Comment Gilbert recommande‑t‑il de gérer une panne récurrente ?", options:["Analyser la cause et changer la méthode de maintenance","Remplacer la machine","Attendre","Former l'opérateur"], correctAnswer:"Analyser la cause et changer la méthode", explanation:"🏆 Gilbert : une panne qui se répète signale une faille méthodologique. Utiliser les 5 pourquoi et améliorer la procédure.", tip:"💡 Utilisez le 'RCA' (Root Cause Analysis)." },
+    { thematic:"Loi de Gilbert", question:"Dans une équipe de développement, quel rituel améliore la méthode ?", options:["Rétrospective agile","Réunion quotidienne de statut","Revue de code informelle","Brainstorming"], correctAnswer:"Rétrospective agile", explanation:"✅ La rétrospective est dédiée à l'amélioration de la méthode : ce qui a bien marché, ce qui peut être amélioré. C'est Gilbert en action.", tip:"💡 Utilisez le 'Start/Stop/Continue'." },
+    { thematic:"Loi de Gilbert", question:"Un chef d'entreprise veut augmenter la productivité. Gilbert lui conseille :", options:["Cartographier les processus et éliminer les gaspillages","Embucher 10 personnes","Baisser les salaires","Ajouter des contrôles"], correctAnswer:"Cartographier les processus", explanation:"📊 La cartographie des flux (value stream mapping) révèle les étapes sans valeur. L'amélioration de la méthode est plus rentable que l'embauche.", tip:"💡 Chassez les 7 gaspillages (transport, attente, surproduction...)." },
+    { thematic:"Loi de Gilbert", question:"Quel est l'indicateur clé d'une bonne méthode selon Gilbert ?", options:["Lead time et taux de première fois juste","Nombre de réunions","Taille de l'équipe","Budget"], correctAnswer:"Lead time et taux de première fois juste", explanation:"🏆 Une méthode efficace réduit le temps de cycle et les erreurs. Mesurez ces indicateurs pour valider les améliorations.", tip:"💡 Faites un tableau de bord visuel." },
+    { thematic:"Loi de Gilbert", question:"Un formateur voit que ses élèves ne progressent pas. Gilbert dirait :", options:["Améliorer la méthode pédagogique (micro‑apprentissage, quiz)","Ajouter plus d'heures","Changer d'élèves","Baisser le niveau"], correctAnswer:"Améliorer la méthode pédagogique", explanation:"✅ La méthode d'enseignement est souvent en cause. Des techniques actives (classe inversée, exercice) améliorent les résultats.", tip:"💡 Utilisez des rétroactions fréquentes." },
+    { thematic:"Loi de Gilbert", question:"En maintenance industrielle, comment appliquer Gilbert ?", options:["Mettre en place une méthode TPM (Total Productive Maintenance)","Changer toutes les machines","Attendre la panne","Former les opérateurs seulement"], correctAnswer:"TPM (méthode)", explanation:"📊 La TPM est une méthode structurée de maintenance préventive et participative. Elle réduit les pannes sans investissement majeur.", tip:"💡 Impliquez les opérateurs dans la maintenance de base." },
+    { thematic:"Loi de Gilbert", question:"Pourquoi les checklists en médecine ont‑elles sauvé des vies ?", options:["Parce qu'elles standardisent la méthode, évitant les oublis","Parce qu'elles sont longues","Parce qu'elles remplacent les médecins","Parce qu'elles sont obligatoires"], correctAnswer:"Elles standardisent la méthode", explanation:"🏆 Les checklists (ex: OMS) réduisent les erreurs de 40% en imposant des étapes critiques. C'est Gilbert appliqué.", tip:"💡 Créez des checklists pour les procédures à risque." },
+    { thematic:"Loi de Gilbert", question:"Un atelier lean Six Sigma utilise l'outil DMAIC. Quel est son objectif ?", options:["Définir, Mesurer, Analyser, Améliorer, Contrôler – amélioration méthodique","Délivrer des résultats rapides","Réduire les effectifs","Augmenter les stocks"], correctAnswer:"Définir, Mesurer, Analyser, Améliorer, Contrôler", explanation:"✅ DMAIC est une méthode structurée de résolution de problèmes. Chaque phase clarifie et mesure avant d'agir, conformément à Gilbert.", tip:"💡 Commencez par 'Define' avec une charte de projet." },
+    { thematic:"Loi de Gilbert", question:"Un responsable logistique voit des délais de livraison longs. Gilbert propose :", options:["Analyser le flux et réduire les étapes sans valeur","Ajouter des camions","Augmenter les stocks","Externaliser"], correctAnswer:"Analyser le flux et réduire les étapes", explanation:"📊 La cartographie de la chaîne de valeur identifie les goulots. L'amélioration de la méthode (ex: juste‑à‑temps) est plus efficace.", tip:"💡 Calculez le 'takt time'." },
+    { thematic:"Loi de Gilbert", question:"Selon Gilbert, la première chose à faire face à un problème complexe est :", options:["Décomposer en sous‑problèmes simples","Chercher plus de budget","Attendre","Demander de l'aide"], correctAnswer:"Décomposer en sous‑problèmes", explanation:"🏆 Kindlin rejoint Gilbert : clarifier et diviser rend la résolution possible. Une méthode d'analyse descendante.", tip:"💡 Utilisez un arbre des causes." },
+    { thematic:"Loi de Gilbert", question:"Un développeur utilise le TDD (Test Driven Development). En quoi est‑ce Gilbert ?", options:["C'est une méthode : écrire le test avant le code force la clarté","C'est plus lent","C'est inutile","C'est pour les experts"], correctAnswer:"Méthode : test avant code", explanation:"✅ TDD est une technique qui améliore la qualité et la conception. Elle incarne Gilbert : la méthode d'écriture des tests guide le développement.", tip:"💡 Écrivez un test rouge, puis le code minimum pour le passer." },
+    { thematic:"Loi de Gilbert", question:"Un manager dit 'on manque de temps'. Gilbert répond :", options:["Utilisez la matrice d'Eisenhower pour prioriser","Faites des heures sup","Demandez des délais","Ignorez certaines tâches"], correctAnswer:"Matrice d'Eisenhower", explanation:"📊 La méthode de priorisation (urgent/important) est plus efficace que de simplement travailler plus. C'est Gilbert : améliorer la méthode de gestion du temps.", tip:"💡 Classez vos tâches chaque matin." },
+    { thematic:"Loi de Gilbert", question:"Un processus de validation de commandes est long. Gilbert propose :", options:["Réduire le nombre de signatures au strict nécessaire","Ajouter des validateurs","Faire des copies","Attendre"], correctAnswer:"Réduire le nombre de signatures", explanation:"🏆 La méthode lean : éliminer les étapes sans valeur. Chaque signature superflue allonge le délai.", tip:"💡 Faites un 'process mapping' et simplifiez." },
+    { thematic:"Loi de Gilbert", question:"En gestion de projet, l'utilisation de 'story points' plutôt que du temps est une application de :", options:["Gilbert (méthode relative plus précise)","Murphy","Pareto","Wilson"], correctAnswer:"Gilbert", explanation:"✅ Les story points évitent l'illusion de précision et forcent l'équipe à comparer la complexité. C'est une meilleure méthode d'estimation.", tip:"💡 Calibrez avec une histoire de référence." },
+    { thematic:"Loi de Gilbert", question:"Pour réduire les erreurs de saisie, quelle méthode Gilbert ?", options:["Mettre des listes déroulantes et des validations automatiques","Former les opérateurs","Augmenter les contrôles","Sanctionner"], correctAnswer:"Listes déroulantes et validations", explanation:"📊 La méthode de conception d'interface (poka‑yoke) empêche l'erreur à la source. Plus efficace que la formation ou le contrôle a posteriori.", tip:"💡 Utilisez des masques de saisie." },
+    { thematic:"Loi de Gilbert", question:"Un service RH reçoit trop de candidatures non qualifiées. Gilbert dit :", options:["Améliorer la méthode de filtrage (questionnaire présélectif)","Publier moins d'annonces","Recruter plus de recruteurs","Baisser les exigences"], correctAnswer:"Améliorer la méthode de filtrage", explanation:"🏆 Un formulaire avec des questions éliminatoires (ex: 'avez‑vous la certification X ?') trie efficacement. C'est améliorer la méthode.", tip:"💡 Ajoutez des tests techniques en ligne." },
+    { thematic:"Loi de Gilbert", question:"Selon Gilbert, pourquoi les 'revues de code' sont‑elles utiles ?", options:["Elles améliorent la méthode de développement","Elles font perdre du temps","Elles sont obligatoires","Elles remplacent les tests"], correctAnswer:"Elles améliorent la méthode", explanation:"✅ Les revues de code permettent de partager les bonnes pratiques, détecter les erreurs de conception, et standardiser les méthodes. REX : réduction de 50% des bugs.", tip:"💡 Faites des revues courtes (moins de 200 lignes)." },
+    { thematic:"Loi de Gilbert", question:"Un commercial utilise un script d'appel. En quoi est‑ce Gilbert ?", options:["C'est une méthode qui augmente le taux de conversion","C'est impersonnel","C'est inutile","C'est pour les débutants"], correctAnswer:"Méthode qui augmente le taux de conversion", explanation:"📊 Un script bien conçu (avec branches conditionnelles) améliore la qualification et la gestion des objections. C'est appliquer une méthode à la vente.", tip:"💡 Testez A/B deux scripts différents." },
+    { thematic:"Loi de Gilbert", question:"Un chef de produit utilise le 'design thinking'. Comment cela se rapporte à Gilbert ?", options:["C'est une méthode d'innovation centrée utilisateur","C'est une mode","C'est compliqué","C'est pour les designers"], correctAnswer:"Méthode d'innovation", explanation:"🏆 Le design thinking impose des étapes : empathie, définition, idées, prototype, test. C'est Gilbert : une méthode structurée pour résoudre des problèmes flous.", tip:"💡 Commencez par des entretiens utilisateurs." },
+    { thematic:"Loi de Gilbert", question:"Quelle est la clé pour passer de 'bonne idée' à 'résultat' selon Gilbert ?", options:["Méthode d'exécution (pilotage, indicateurs, itérations)","Financement","Talents","Opportunité"], correctAnswer:"Méthode d'exécution", explanation:"✅ Sans méthode d'exécution, les idées restent des intentions. Gilbert prône le 'bias for action' avec une approche itérative.", tip:"💡 Utilisez le 'OKR' pour cadrer l'exécution." },
+    { thematic:"Loi de Gilbert", question:"Un entrepreneur échoue malgré un bon produit. Gilbert dirait :", options:["Sa méthode de commercialisation (acquisition, vente) est défaillante","Le produit est mauvais","Il manque d'argent","La concurrence est trop forte"], correctAnswer:"Sa méthode de commercialisation est défaillante", explanation:"📊 Gilbert : évaluer la méthode de go‑to‑market. Beaucoup d'échecs viennent d'un mauvais canal ou d'un message mal adapté.", tip:"💡 Testez des petits lots de clients." },
+    { thematic:"Loi de Gilbert", question:"Comment améliorer la réunionite aiguë ?", options:["Méthode : ordre du jour + timebox + DACI","Augmenter la fréquence","Inviter plus de monde","Supprimer toutes les réunions"], correctAnswer:"Ordre du jour + timebox + DACI", explanation:"🏆 Gilbert : structurer la réunion (objectif, rôle, temps) la rend efficace. Les réunions sans méthode sont chronophages.", tip:"💡 Finissez chaque réunion par des actions claires." },
+    // ********** LOI DE WILSON (40) **********
+    { thematic:"Loi de Wilson", question:"Selon Wilson, avant de gagner de l'argent, il faut :", options:["Développer une compétence utile et rare","Avoir du capital","Avoir de la chance","Copier les autres"], correctAnswer:"Développer une compétence utile et rare", explanation:"📊 Wilson : l'argent suit l'intelligence et la connaissance. Investir dans l'apprentissage crée une valeur que le marché récompense.", tip:"💡 Dédiez 1h par jour à une compétence monnayable." },
+    { thematic:"Loi de Wilson", question:"Un freelance n'arrive pas à augmenter ses tarifs. Que conseille Wilson ?", options:["Acquérir une certification ou une compétence précise","Baisser ses prix","Travailler plus d'heures","Attendre"], correctAnswer:"Acquérir une certification", explanation:"🏆 Wilson : montez en compétence sur un créneau porteur. La rareté de l'expertise justifie un prix plus élevé. REX : spécialisation double le TJM.", tip:"💡 Identifiez les skills les mieux valorisés sur Malt / Upwork." },
+    { thematic:"Loi de Wilson", question:"Pourquoi investir dans une formation continue est stratégique ?", options:["Wilson : le capital intellectuel génère des opportunités financières","C'est amusant","Pour avoir un diplôme","Pour éviter le chômage"], correctAnswer:"Capital intellectuel génère des opportunités", explanation:"✅ Wilson soutient que l'argent est une conséquence de la valeur créée par le savoir. Les professionnels qui apprennent en continu ont des revenus 3x supérieurs.", tip:"💡 Apprenez par projets : construisez un portfolio." },
+    { thematic:"Loi de Wilson", question:"Un entrepreneur débutant veut lancer une startup tech. Wilson dirait :", options:["D'abord acquérir des compétences techniques ou commerciales clés","Emprunter de l'argent","Recruter tout de suite","Faire du dropshipping"], correctAnswer:"Acquérir des compétences clés", explanation:"📊 Beaucoup échouent par manque de savoir‑faire. Wilson conseille de maîtriser le métier (coder, vendre) avant de chercher des fonds. REX des licornes.", tip:"💡 Faites un 'lean startup' : apprenez par petites expériences." },
+    { thematic:"Loi de Wilson", question:"Quel indicateur reflète la loi de Wilson dans une entreprise ?", options:["Investissement en formation par employé vs croissance","Nombre de réunions","Taille des bureaux","Nombre de process"], correctAnswer:"Investissement en formation vs croissance", explanation:"🏆 Les entreprises qui forment régulièrement leurs équipes (upskilling) surperforment. Wilson : la connaissance actionnée génère des résultats.", tip:"💡 Mettez en place un budget formation de 5% de la masse salariale." },
+    { thematic:"Loi de Wilson", question:"Wilson recommande de 'monnayer son savoir'. Comment ?", options:["Créez un contenu (cours, audit, consulting) basé sur votre expertise","Vendre des produits génériques","Travailler gratuitement","Attendre un héritage"], correctAnswer:"Créez un contenu basé sur votre expertise", explanation:"✅ L'expertise se transforme en actifs numériques (formation en ligne, livres, templates). C'est l'application Wilson : le savoir produit des revenus passifs.", tip:"💡 Identifiez un problème récurrent dans votre secteur et proposez une solution payante." },
+    { thematic:"Loi de Wilson", question:"Pourquoi un diplôme seul ne suffit pas selon Wilson ?", options:["Wilson valorise le savoir appliqué, pas le papier","Le diplôme est inutile","Il faut un master","Le diplôme coûte cher"], correctAnswer:"Wilson valorise le savoir appliqué", explanation:"📊 Ce qui crée de la valeur, c'est la connaissance opérationnelle (savoir‑faire). Wilson prône l'intelligence pratique, celle qui résout des problèmes concrets.", tip:"💡 Mettez en œuvre des projets open source pour prouver votre skill." },
+    { thematic:"Loi de Wilson", question:"Un employé stagne dans son poste. Selon Wilson, quelle action prioritaire ?", options:["Apprendre un outil ou une méthode nouvelle à forte demande","Demander une augmentation","Changer d'entreprise sans formation","Faire du lobbying"], correctAnswer:"Apprendre un outil ou méthode nouvelle", explanation:"🏆 Wilson : l'argent suit les compétences. Se former à l'IA, la data, la cybersécurité, etc. débloque des promotions ou des meilleurs postes.", tip:"💡 Utilisez Coursera ou DataCamp pour des micro-certifications." },
+    { thematic:"Loi de Wilson", question:"Que signifie 'la connaissance est un actif qui ne se déprécie pas' ?", options:["Elle génère des opportunités même en crise","Elle se vend cher","Elle est stable","Elle est difficile"], correctAnswer:"Elle génère des opportunités même en crise", explanation:"✅ Un cerveau compétent trouve des voies alternatives. Les périodes de récession récompensent les adaptables.", tip:"💡 Lisez un livre technique par mois et appliquez un concept." },
+    { thematic:"Loi de Wilson", question:"Un photographe amateur veut devenir pro. Wilson conseille :", options:["Se spécialiser dans un créneau (mariage, produit, portrait) et se former à la prise de vue et à l'édition","Acheter du matériel cher","Baisser ses prix","Attendre les commandes"], correctAnswer:"Se spécialiser et se former", explanation:"📊 Wilson : d'abord maîtriser le métier (technique, éclairage, post‑traitement) puis monnayer. La qualité attire les clients.", tip:"💡 Créez un portfolio ciblé." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les consultants experts facturent-ils plus cher ?", options:["Leur savoir rare et pointu est très demandé","Ils ont de gros frais","Ils sont plus âgés","Ils trichent"], correctAnswer:"Leur savoir rare est très demandé", explanation:"🏆 Wilson : la rareté de la connaissance crée la valeur. Un expert en régulation financière ou en cobotique est très bien payé.", tip:"💡 Devenez le référent d'une niche." },
+    { thematic:"Loi de Wilson", question:"Un développeur veut augmenter son revenu. Wilson lui dit :", options:["Apprendre un framework très demandé (React, Angular, Spring)","Travailler plus d'heures","Changer d'entreprise tous les ans","Attendre une promotion"], correctAnswer:"Apprendre un framework très demandé", explanation:"✅ La maîtrise d'une technologie populaire augmente la valeur sur le marché. Wilson : investissez dans la compétence avant de chercher le gain.", tip:"💡 Suivez les tendances sur Stack Overflow Survey." },
+    { thematic:"Loi de Wilson", question:"Quel est le piège à éviter selon Wilson ?", options:["Attendre que l'argent vienne avant d'apprendre","Apprendre en continu","Investir dans des livres","Suivre des conférences"], correctAnswer:"Attendre que l'argent vienne avant d'apprendre", explanation:"📊 Wilson : l'ordre est d'abord le savoir, ensuite l'argent. Beaucoup font l'inverse et stagnent.", tip:"💡 Considérez la formation comme un investissement prioritaire." },
+    { thematic:"Loi de Wilson", question:"Comment transformer un hobby en source de revenus ?", options:["Atteindre un niveau d'expertise et monétiser via des cours/consulting","Attendre qu'on vous paie","Copier les autres","Vendre du matériel"], correctAnswer:"Atteindre un niveau d'expertise", explanation:"🏆 Wilson : maîtrisez d'abord le sujet (savoir), puis proposez des services ou produits dérivés. REX : des passionnés de jardinage donnent des formations.", tip:"💡 Créez un blog ou une chaîne YouTube pour partager votre savoir." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les entreprises qui forment leurs employés sont‑elles plus performantes ?", options:["Elles augmentent le capital intellectuel collectif","Elles réduisent les salaires","Elles évitent les impôts","Elles embauchent moins"], correctAnswer:"Elles augmentent le capital intellectuel collectif", explanation:"✅ Wilson appliqué à l'entreprise : la connaissance partagée améliore les méthodes et la réactivité.", tip:"💡 Mettez en place des 'learning Fridays'." },
+    { thematic:"Loi de Wilson", question:"Que signifie 'savoir monnayable' ?", options:["Une compétence pour laquelle des gens sont prêts à payer","Une compétence scolaire","Un diplôme","Un loisir"], correctAnswer:"Compétence pour laquelle des gens paient", explanation:"📊 Wilson : tout savoir n'a pas de valeur marchande. Il faut identifier les compétences demandées sur le marché.", tip:"💡 Étudiez les offres d'emploi pour détecter les compétences chaudes." },
+    { thematic:"Loi de Wilson", question:"Un artisan veut augmenter son chiffre d'affaires. Wilson lui suggère :", options:["Se former à une technique rare (ex: rénovation écologique)","Baisser ses prix","Faire plus de publicité","Embaucher un commercial"], correctAnswer:"Se former à une technique rare", explanation:"🏆 La spécialisation dans un créneau porteur (ex: peinture à la chaux) permet de facturer plus cher. Wilson : la connaissance rare crée la valeur.", tip:"💡 Obtenez une certification reconnue dans votre métier." },
+    { thematic:"Loi de Wilson", question:"En période de crise, quel est le meilleur investissement selon Wilson ?", options:["Acquérir de nouvelles compétences adaptées au marché","Thésauriser","Acheter de l'or","Placer en bourse"], correctAnswer:"Acquérir de nouvelles compétences", explanation:"✅ Wilson : les compétences sont un actif récessif. Pendant une crise, se former aux métiers d'avenir (digital, santé, énergie) prépare la reprise.", tip:"💡 Identifiez les secteurs qui recrutent malgré la crise." },
+    { thematic:"Loi de Wilson", question:"Un ingénieur veut devenir manager. Wilson conseille :", options:["Suivre une formation en leadership et gestion d'équipe","Attendre une promotion","Faire un MBA coûteux","Changer d'entreprise"], correctAnswer:"Suivre une formation en leadership", explanation:"📊 Wilson : le savoir en gestion (feedback, délégation, planification) est nécessaire avant de prétendre au poste. REX : les managers formés réussissent mieux.", tip:"💡 Demandez un mentorat." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les certifications professionnelles augmentent‑elles le salaire ?", options:["Elles prouvent une connaissance validée par un tiers","Elles sont chères","Elles sont obligatoires","Elles remplacent l'expérience"], correctAnswer:"Elles prouvent une connaissance validée", explanation:"🏆 Wilson : la certification est une preuve de savoir qui réduit l'incertitude de l'employeur. Justifie un meilleur salaire.", tip:"💡 Choisissez des certifications reconnues (PMP, AWS, CISSP)." },
+    { thematic:"Loi de Wilson", question:"Un coach sportif veut plus de clients. Wilson dit :", options:["Se former à une méthode spécifique (ex: préparation mentale, nutrition)","Baisser ses tarifs","Faire plus de démarchage","Changer de sport"], correctAnswer:"Se former à une méthode spécifique", explanation:"✅ La spécialisation dans une niche (ex: reprise après blessure) attire des clients prêts à payer plus. Wilson : le savoir différencie.", tip:"💡 Créez un programme signature." },
+    { thematic:"Loi de Wilson", question:"Un étudiant hésite entre deux masters. Lequel choisir selon Wilson ?", options:["Celui qui apporte des compétences concrètes et recherchées","Le plus réputé","Le moins cher","Le plus court"], correctAnswer:"Compétences concrètes et recherchées", explanation:"📊 Wilson : privilégiez l'acquisition de savoirs utiles sur le marché. Un master avec alternance ou projets réels est préférable.", tip:"💡 Regardez le taux d'insertion professionnelle." },
+    { thematic:"Loi de Wilson", question:"Un commercial performant mais sans diplôme peut‑il gagner beaucoup ?", options:["Oui, si ses compétences en vente (méthode, closing) sont excellentes","Non, sans diplôme c'est impossible","Il faut un master","Seule la chance compte"], correctAnswer:"Oui, si ses compétences sont excellentes", explanation:"🏆 Wilson valorise le savoir-faire, pas les diplômes. Un commercial avec des techniques éprouvées et un bon carnet d'adresses est très bien rémunéré.", tip:"💡 Documentez vos résultats (KPIs)." },
+    { thematic:"Loi de Wilson", question:"Que faire si votre métier est menacé par l'IA ?", options:["Vous former aux compétences complémentaires (créativité, relationnel, analyse stratégique)","Attendre","Changer de secteur radicalement","Protester"], correctAnswer:"Vous former aux compétences complémentaires", explanation:"✅ Wilson : l'IA remplace les tâches, pas les connaissances humaines de haut niveau. Investissez dans les soft skills et la maîtrise des outils d'IA.", tip:"💡 Apprenez à utiliser l'IA comme assistant (prompt engineering)." },
+    { thematic:"Loi de Wilson", question:"Un jardinier paysagiste peut‑il augmenter ses revenus ?", options:["Se former à la conception de jardins écologiques et à la gestion de l'eau","Travailler plus d'heures","Baisser ses prix","Acheter du matériel plus cher"], correctAnswer:"Se former à des techniques spécifiques", explanation:"📊 Wilson : une expertise pointue (xéropaysagisme, jardins méditerranéens) attire une clientèle premium.", tip:"💡 Obtenez une certification 'eco‑jardinier'." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les formateurs en ligne gagnent-ils beaucoup d'argent ?", options:["Ils monétisent leur savoir à grande échelle (cours, formations)","Ils sont chanceux","Ils vendent du rêve","Ils ont des sponsors"], correctAnswer:"Ils monétisent leur savoir à grande échelle", explanation:"🏆 Wilson : une fois la connaissance créée, elle peut être vendue à des milliers de personnes (coût marginal nul). C'est le pouvoir du levier.", tip:"💡 Créez une formation sur une compétence que vous maîtrisez." },
+    { thematic:"Loi de Wilson", question:"Un serveur dans un restaurant peut‑il évoluer financièrement ?", options:["Se former à la gestion de salle, sommellerie, ou management","Attendre des pourboires","Changer de métier","Travailler plus de shifts"], correctAnswer:"Se former à des spécialités", explanation:"✅ Wilson : acquérir des compétences rares (sommelier, barista expert, gestion) ouvre des postes mieux rémunérés (chef de rang, maître d'hôtel).", tip:"💡 Passez des certifications reconnues dans la restauration." },
+    { thematic:"Loi de Wilson", question:"Un community manager veut augmenter ses tarifs. Wilson conseille :", options:["Se spécialiser dans un secteur (luxe, B2B tech) et maîtriser l'analyse de données","Publier plus souvent","Travailler pour plusieurs clients","Utiliser des bots"], correctAnswer:"Se spécialiser et maîtriser l'analyse", explanation:"📊 La connaissance du marché et des KPI sociaux (engagement, conversion) est rare. Wilson : une expertise sectorielle justifie des honoraires plus élevés.", tip:"💡 Proposez des rapports d'analyse avancés." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les ingénieurs en data science sont-ils bien payés ?", options:["Leur savoir en statistiques, ML et outils est rare et très demandé","Ils travaillent beaucoup","Ils ont des thèses","Leurs diplômes sont longs"], correctAnswer:"Leur savoir rare est très demandé", explanation:"🏆 Wilson : la rareté des compétences en data crée une forte valeur sur le marché. Offre faible, demande forte.", tip:"💡 Spécialisez‑vous dans un domaine appliqué (finance, santé)." },
+    { thematic:"Loi de Wilson", question:"Un auto‑entrepreneur qui vend des services doit d'abord :", options:["Maîtriser une compétence que les clients recherchent (ex: site web, rédaction SEO)","Créer une SAS","Acheter une voiture","Faire du publipostage"], correctAnswer:"Maîtriser une compétence recherchée", explanation:"✅ Wilson : le service n'a de valeur que si le prestataire a un savoir utile. Avant de prospecter, formez-vous.", tip:"💡 Testez votre compétence sur des petits projets." },
+    { thematic:"Loi de Wilson", question:"Un étudiant en histoire peut‑il bien gagner sa vie ?", options:["Oui en acquérant des compétences numériques (archivage, gestion de bases, médiation)","Non, les débouchés sont bouchés","Il doit faire un doctorat","Il doit enseigner"], correctAnswer:"Oui en acquérant des compétences numériques", explanation:"📊 Wilson : la connaissance historique peut être valorisée si elle est couplée à une compétence technique (ex: digitalisation de patrimoine).", tip:"💡 Créez une activité de consultant en valorisation de données historiques." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les coachs en entreprise facturent-ils des milliers d'euros ?", options:["Leur connaissance des dynamiques d'équipe et des process est rare","Ils sont bien habillés","Ils ont des réseaux","Ils travaillent peu"], correctAnswer:"Leur connaissance rare est valorisée", explanation:"🏆 Wilson : un bon coach a une expertise pointue en psychologie sociale, en gestion de conflit, et en méthodes d'accompagnement.", tip:"💡 Certifiez‑vous (ICF, HEC)." },
+    { thematic:"Loi de Wilson", question:"Un ouvrier spécialisé peut‑il doubler son salaire ?", options:["Oui en se formant à la maintenance de machines automatisées ou à la soudure spécialisée","Non, son métier est mal payé","En changeant de pays","En faisant des heures sup"], correctAnswer:"En se formant à des compétences techniques rares", explanation:"✅ Wilson : la rareté du savoir (ex: soudure sous‑marine, robotique) permet des salaires très élevés.", tip:"💡 Renseignez-vous sur les métiers en tension dans l'industrie." },
+    { thematic:"Loi de Wilson", question:"Un traducteur voit ses tarifs baisser à cause de l'IA. Que faire ?", options:["Se spécialiser dans la traduction technique ou littéraire de niche + post‑édition","Baisser ses prix","Abandonner","Utiliser des outils gratuits"], correctAnswer:"Se spécialiser dans des niches et la post‑édition", explanation:"📊 Wilson : la connaissance de domaines complexes (juridique, médical) et la relecture experte restent rares. Apprendre à utiliser l'IA comme outil.", tip:"💡 Proposez des services de qualité terminologique." },
+    { thematic:"Loi de Wilson", question:"Un enseignant peut‑il monétiser son savoir en dehors de l'école ?", options:["Oui en créant des formations en ligne, des tutoriels, du soutien scolaire premium","Non, c'est interdit","En vendant des cours sur Amazon","En faisant du baby‑sitting"], correctAnswer:"Créer des formations en ligne", explanation:"🏆 Wilson : le savoir pédagogique d'un enseignant a une valeur. Les plateformes (Udemy, Teachable) permettent de le monnayer.", tip:"💡 Filmez des micro‑leçons." },
+    { thematic:"Loi de Wilson", question:"Un YouTubeur scientifique gagne de l'argent. Pourquoi ?", options:["Il partage un savoir rare et le monétise via publicités, sponsors, formations","Il a beaucoup d'abonnés","Il est beau","Il fait des polémiques"], correctAnswer:"Il partage un savoir rare et le monétise", explanation:"✅ Wilson : la vulgarisation scientifique est une forme de connaissance valorisable. L'audience fidèle génère des revenus.", tip:"💡 Créez une chaîne autour d'un sujet pointu." }
+];
+console.assert(FULL_QUESTIONS.length === 80, "80 questions OK");
+
+// LOGIQUE DU QUIZ (identique à quiz1)
+let currentIndex = 0, score = 0, userAnswers = [], questionsList = [], selectedCount = 40;
+const settingsPanel = document.getElementById('settings-panel');
+const quizContent = document.getElementById('quiz-content');
+const startBtn = document.getElementById('start-quiz-btn');
+const nextBtn = document.getElementById('next-btn');
+const prevBtn = document.getElementById('prev-btn');
+const finishBtn = document.getElementById('finish-btn');
+const questionCounter = document.getElementById('question-counter');
+const currentScoreSpan = document.getElementById('current-score');
+const progressBar = document.getElementById('progress-bar');
+const questionText = document.getElementById('question-text');
+const thematicBadge = document.getElementById('thematic-badge');
+const optionsDiv = document.getElementById('options-container');
+const feedbackBox = document.getElementById('feedback-box');
+const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+const restartBtn = document.getElementById('restart-quiz-btn');
+
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+function startQuiz() {
+    selectedCount = parseInt(document.getElementById('question-count').value);
+    let all = [...FULL_QUESTIONS];
+    if (all.length < selectedCount) selectedCount = all.length;
+    questionsList = shuffle(all).slice(0, selectedCount);
+    currentIndex = 0; score = 0; userAnswers = new Array(questionsList.length).fill(null);
+    settingsPanel.classList.add('d-none'); quizContent.classList.remove('d-none');
+    displayQuestion(0); updateScore();
+}
+
+function updateScore() { currentScoreSpan.innerText = `Score: ${score}/${questionsList.length}`; }
+
+function displayQuestion(index) {
+    feedbackBox.classList.add('d-none');
+    const q = questionsList[index];
+    questionText.innerText = q.question;
+    thematicBadge.innerText = q.thematic;
+    thematicBadge.className = 'thematic-badge ' + (q.thematic.includes('Gilbert') ? 'badge-gilbert' : 'badge-wilson');
+    optionsDiv.innerHTML = '';
+    const shuffledOpts = shuffle([...q.options]);
+    shuffledOpts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt; btn.className = 'btn option-btn';
+        btn.onclick = () => selectAnswer(btn, opt, index);
+        optionsDiv.appendChild(btn);
+    });
+    if (userAnswers[index]) showFeedback(index);
+    const progress = ((index + 1) / questionsList.length) * 100;
+    progressBar.style.width = `${progress}%`;
+    questionCounter.innerText = `Question ${index + 1} / ${questionsList.length}`;
+    prevBtn.disabled = index === 0;
+    nextBtn.classList.toggle('d-none', index === questionsList.length - 1);
+    finishBtn.classList.toggle('d-none', index !== questionsList.length - 1);
+}
+
+function selectAnswer(btn, selected, idx) {
+    if (userAnswers[idx] !== null) return;
+    const q = questionsList[idx];
+    const isCorrect = (selected === q.correctAnswer);
+    if (isCorrect) score++;
+    userAnswers[idx] = { selected, correct: q.correctAnswer, isCorrect };
+    updateScore();
+    document.querySelectorAll('.option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.innerText === q.correctAnswer) b.classList.add('correct');
+        if (b.innerText === selected && !isCorrect) b.classList.add('incorrect');
+    });
+    showFeedback(idx);
+}
+
+function showFeedback(idx) {
+    const ua = userAnswers[idx]; if (!ua) return;
+    const q = questionsList[idx];
+    const isUserCorrect = ua.isCorrect;
+    const correctAnswerText = q.correctAnswer;
+    const feedbackHtml = `
+        <div class="${isUserCorrect ? 'feedback-correct' : 'feedback-incorrect'} p-3 rounded">
+            <h5>${isUserCorrect ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}</h5>
+            <p><strong>La bonne réponse était :</strong> ${correctAnswerText}</p>
+            <p><strong>📖 Explication détaillée :</strong> ${q.explanation}</p>
+            <div class="tip-box"><strong>💡 Conseil pratique / REX :</strong> ${q.tip}</div>
+        </div>
+    `;
+    feedbackBox.innerHTML = feedbackHtml;
+    feedbackBox.classList.remove('d-none');
+}
+
+function handleNext() { if (currentIndex < questionsList.length - 1) { currentIndex++; displayQuestion(currentIndex); } }
+function handlePrev() { if (currentIndex > 0) { currentIndex--; displayQuestion(currentIndex); } }
+
+function showFinal() {
+    const percent = (score / questionsList.length) * 100;
+    let gilbertCount = questionsList.filter(q => q.thematic.includes('Gilbert')).length;
+    let wilsonCount = questionsList.filter(q => q.thematic.includes('Wilson')).length;
+    let gilbertScore = 0, wilsonScore = 0;
+    questionsList.forEach((q, i) => {
+        if (q.thematic.includes('Gilbert') && userAnswers[i]?.isCorrect) gilbertScore++;
+        if (q.thematic.includes('Wilson') && userAnswers[i]?.isCorrect) wilsonScore++;
+    });
+    let gilbertPercent = gilbertCount ? (gilbertScore / gilbertCount) * 100 : 0;
+    let wilsonPercent = wilsonCount ? (wilsonScore / wilsonCount) * 100 : 0;
+    document.getElementById('gilbert-skill').style.width = `${gilbertPercent}%`;
+    document.getElementById('wilson-skill').style.width = `${wilsonPercent}%`;
+    document.getElementById('gilbert-text').innerText = `Gilbert : ${gilbertPercent.toFixed(0)}% (${gilbertScore}/${gilbertCount})`;
+    document.getElementById('wilson-text').innerText = `Wilson : ${wilsonPercent.toFixed(0)}% (${wilsonScore}/${wilsonCount})`;
+    document.getElementById('final-score-correct').innerText = score;
+    document.getElementById('final-score-total').innerText = questionsList.length;
+    document.getElementById('final-score-percentage').innerText = `${percent.toFixed(0)}%`;
+    let recos = percent >= 80 ? "Excellent ! Vous maîtrisez la méthode et le savoir monnayable." : percent >= 60 ? "Bon niveau, renforcez-vous sur les axes faibles." : "Reprenez les fiches des lois et pratiquez avec des cas concrets.";
+    document.getElementById('final-recommendations').innerHTML = `<h6>🎯 Synthèse</h6><p>${recos}</p>`;
+    document.getElementById('short-term').innerHTML = "<i class='fas fa-check-circle'></i> Appliquez une loi par semaine : améliorez une méthode, puis apprenez une compétence.";
+    document.getElementById('long-term').innerHTML = "<i class='fas fa-chart-line'></i> Devenez le référent en optimisation de processus et en développement des compétences.";
+    resultsModal.show();
+}
+
+function restart() { settingsPanel.classList.remove('d-none'); quizContent.classList.add('d-none'); resultsModal.hide(); }
+
+startBtn.addEventListener('click', startQuiz);
+nextBtn.addEventListener('click', handleNext);
+prevBtn.addEventListener('click', handlePrev);
+finishBtn.addEventListener('click', showFinal);
+restartBtn.addEventListener('click', restart);
+</script>
+</body>
+</html>

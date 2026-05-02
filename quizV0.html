@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz · 7 Lois Universelles · 80 cas uniques</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --murphy-color: #dc2626; --kindlin-color: #3b82f6; --gilbert-color: #f97316;
+            --wilson-color: #06b6d4; --pareto-color: #8b5cf6; --hofstadter-color: #10b981; --assomption-color: #ec489a;
+        }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); min-height: 100vh; padding-top: 1rem; }
+        .quiz-container { max-width: 1000px; margin: auto; background-color: white; padding: 2rem; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .quiz-header { text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 2.5rem 2rem; border-radius: 15px; }
+        .quiz-header h1 { font-weight: 800; font-size: 2.5rem; background: linear-gradient(135deg, #facc15, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .year-badge { background: linear-gradient(135deg, #8b5cf6, #06b6d4); color: white; padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 700; display: inline-block; }
+        .badge-murphy { background-color: rgba(220,38,38,0.1); border-color: #dc2626; color: #dc2626; }
+        .badge-kindlin { background-color: rgba(59,130,246,0.1); border-color: #3b82f6; color: #3b82f6; }
+        .badge-gilbert { background-color: rgba(249,115,22,0.1); border-color: #f97316; color: #f97316; }
+        .badge-wilson { background-color: rgba(6,182,212,0.1); border-color: #06b6d4; color: #06b6d4; }
+        .badge-pareto { background-color: rgba(139,92,246,0.1); border-color: #8b5cf6; color: #8b5cf6; }
+        .badge-hofstadter { background-color: rgba(16,185,129,0.1); border-color: #10b981; color: #10b981; }
+        .badge-assomption { background-color: rgba(236,72,153,0.1); border-color: #ec489a; color: #ec489a; }
+        .option-btn { display: block; width: 100%; text-align: left; padding: 1rem 1.5rem; margin-bottom: 0.75rem; border-radius: 12px; border: 2px solid #e2e8f0; background-color: white; transition: 0.2s; cursor: pointer; }
+        .option-btn:hover:not([disabled]) { border-color: #f97316; transform: translateY(-2px); }
+        .option-btn.correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; font-weight: 600; }
+        .option-btn.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; color: #7f1d1d !important; font-weight: 600; }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+        .explanation-correct { background-color: #ecfdf5; border-left: 5px solid #10b981; }
+        .explanation-incorrect { background-color: #fef2f2; border-left: 5px solid #dc2626; }
+        .tip-box { background: #fef9e3; border-left: 4px solid #facc15; margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; }
+        .btn-audit { background: linear-gradient(135deg, #f97316, #dc2626); color: white; border: none; }
+        .theme-card { background: white; border-radius: 12px; padding: 1rem; border: 1px solid #e2e8f0; height: 100%; }
+        .progress-bar { background: linear-gradient(90deg, #f97316, #dc2626); }
+        .final-score { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1><i class="fas fa-brain"></i> 7 Lois Universelles · 80 cas uniques</h1>
+            <p>Cas pratiques, retours terrain et bonnes pratiques – sans répétition</p>
+            <div class="year-badge">80 questions originales · Architecte de décision</div>
+        </div>
+
+        <div id="settings-panel">
+            <h4 class="text-center mb-4"><i class="fas fa-sliders-h"></i> Configuration</h4>
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <label for="question-count" class="form-label">Nombre de questions :</label>
+                    <select id="question-count" class="form-select">
+                        <option value="20">20 questions</option>
+                        <option value="40" selected>40 questions</option>
+                        <option value="60">60 questions</option>
+                        <option value="80">80 questions (toutes)</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="start-quiz-btn" class="btn btn-audit w-100"><i class="fas fa-rocket"></i> Démarrer</button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <h5><i class="fas fa-filter"></i> Lois à évaluer (toutes par défaut)</h5>
+                <div class="row">
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-murphy" checked> <label>🔥 Murphy</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-kindlin" checked> <label>🎯 Kindlin</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-gilbert" checked> <label>⚙️ Gilbert</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-wilson" checked> <label>💰 Wilson</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-pareto" checked> <label>📊 Pareto</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-hofstadter" checked> <label>⏳ Hofstadter</label></div>
+                    <div class="col-md-4"><input class="form-check-input" type="checkbox" id="dom-assomption" checked> <label>🧠 Assomption</label></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz-content" class="d-none">
+            <div class="progress-container mb-3">
+                <div class="d-flex justify-content-between"><span id="question-counter"></span><span id="current-score">Score: 0</span></div>
+                <div class="progress"><div id="progress-bar" class="progress-bar" style="width: 0%"></div></div>
+            </div>
+            <div id="question-card" class="card p-3">
+                <div class="thematic-badge" id="thematic-badge"></div>
+                <h3 id="question-text" class="mt-2"></h3>
+                <div id="options-container"></div>
+                <div id="explanation-box" class="d-none mt-3 p-3 rounded"></div>
+            </div>
+            <div class="quiz-navigation d-flex justify-content-between mt-4">
+                <button id="prev-btn" class="btn btn-outline-secondary" disabled><i class="fas fa-arrow-left"></i> Précédent</button>
+                <button id="next-btn" class="btn btn-audit">Suivant <i class="fas fa-arrow-right"></i></button>
+                <button id="finish-btn" class="btn btn-success d-none"><i class="fas fa-trophy"></i> Terminer</button>
+            </div>
+        </div>
+
+        <!-- BLOC EXPLICATIF DES 7 LOIS UNIVERSELLES -->
+        <div class="laws-explanation mb-5 p-4 rounded" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border-left: 6px solid #f97316; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <h3 class="mb-4 text-center"><i class="fas fa-book-open"></i> Les 7 Lois Universelles · Définition, REX & Chiffres clés</h3>
+            <div class="row g-4">
+                <!-- Loi 1 : Murphy -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger"><i class="fas fa-bomb"></i> Loi de Murphy</h5>
+                            <p class="card-text"><strong>Principe :</strong> « Tout ce qui peut mal tourner finira par mal tourner. »</p>
+                            <p><strong>Exemple concret :</strong> Un déploiement le vendredi à 17h → panne → équipe indisponible le week-end → perte financière.</p>
+                            <p><strong>REX (retour d’expérience) :</strong> Chez Netflix, le <em>Chaos Monkey</em> provoque volontairement des pannes en production pour forcer la résilience. Résultat : 99,99% de disponibilité.</p>
+                            <p><strong>Chiffre clé :</strong> Les projets avec <em>pre‑mortem</em> (anticipation des échecs) réduisent les dépassements de budget de <strong>30%</strong> (étude MIT).</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Testez régulièrement vos backups et planifiez des « game days ».</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 2 : Kindlin -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary"><i class="fas fa-search"></i> Loi de Kindlin</h5>
+                            <p class="card-text"><strong>Principe :</strong> « Un problème bien formulé est à moitié résolu. »</p>
+                            <p><strong>Exemple :</strong> « L’application est lente » → reformuler en « Le temps de réponse du paiement dépasse 2s pour 10% des utilisateurs ». La solution devient évidente (CDN, cache).</p>
+                            <p><strong>REX :</strong> Une équipe support a réduit son MTTR de 70% en imposant un template structuré (environnement, étapes, erreur attendue).</p>
+                            <p><strong>Chiffre :</strong> 80% des problèmes complexes se résolvent en moins d’1h si le problème est clarifié avec les « 5 pourquoi ».</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Utilisez la question « Quel est l’écart exact entre la situation actuelle et l’objectif ? »</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 3 : Gilbert -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning"><i class="fas fa-cogs"></i> Loi de Gilbert</h5>
+                            <p class="card-text"><strong>Principe :</strong> « Le plus grand défi est de trouver la meilleure méthode, pas d’avoir plus de moyens. »</p>
+                            <p><strong>Exemple :</strong> Deux équipes commerciales avec mêmes leads : l’une performe 3x mieux grâce à un script de qualification rigoureux.</p>
+                            <p><strong>REX :</strong> Toyota a doublé sa productivité en appliquant le <em>Kanban</em> et le <em>Kaizen</em> (amélioration continue de la méthode) sans embaucher.</p>
+                            <p><strong>Chiffre :</strong> Une amélioration méthodologique (ex : passage au Scrum) augmente la vélocité de <strong>40%</strong> en moyenne (State of Agile Report).</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Avant d’ajouter des ressources, cartographiez votre processus et éliminez les gaspillages.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 4 : Wilson -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-info"><i class="fas fa-graduation-cap"></i> Loi de Wilson</h5>
+                            <p class="card-text"><strong>Principe :</strong> « L’argent suit l’intelligence et la connaissance. »</p>
+                            <p><strong>Exemple :</strong> Un développeur certifié Kubernetes gagne en moyenne 40% de plus qu’un développeur non certifié (enquête Stack Overflow).</p>
+                            <p><strong>REX :</strong> Une entreprise qui investit 5% de sa masse salariale en formation voit son chiffre d’affaires croître 2x plus vite (étude LinkedIn Workplace Learning).</p>
+                            <p><strong>Chiffre :</strong> Les freelances avec une spécialisation rare (ex : expertise en cybersécurité) facturent <strong>3x</strong> le tarif généraliste.</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Consacrez 1h par jour à l’acquisition d’une compétence monnayable (code, vente, data).</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 5 : Pareto -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-purple" style="color:#8b5cf6"><i class="fas fa-chart-pie"></i> Loi de Pareto (80/20)</h5>
+                            <p class="card-text"><strong>Principe :</strong> « 80% des effets viennent de 20% des causes. »</p>
+                            <p><strong>Exemple :</strong> 20% des clients génèrent 80% du chiffre d’affaires. 20% des bugs causent 80% des plantages.</p>
+                            <p><strong>REX :</strong> Une entreprise de e‑commerce a augmenté son bénéfice de 50% en arrêtant 80% des canaux marketing non performants et en doublant l’investissement sur les 20% rentables.</p>
+                            <p><strong>Chiffre :</strong> Appliquer Pareto à la gestion du temps peut libérer <strong>2h par jour</strong> en se concentrant sur les tâches à fort impact.</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Faites un audit de vos activités et éliminez les 80% à faible valeur ajoutée.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 6 : Hofstadter -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><i class="fas fa-hourglass-half"></i> Loi de Hofstadter</h5>
+                            <p class="card-text"><strong>Principe :</strong> « Tout prend toujours plus de temps que prévu, même quand on tient compte de cette loi. »</p>
+                            <p><strong>Exemple :</strong> Les rénovations domiciliaires dépassent systématiquement les estimations (2 mois prévus → 5 mois réels).</p>
+                            <p><strong>REX :</strong> Dans le logiciel, les sprints agiles avec une vélocité historique intègrent un facteur 1,5 à 2 par rapport à l’estimation initiale. Résultat : 90% des sprints tiennent leurs engagements.</p>
+                            <p><strong>Chiffre :</strong> Les grands projets d’infrastructure dépassent leur budget de <strong>70%</strong> en moyenne (étude Flyvbjerg).</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Multipliez vos premières estimations par 2 (ou par 1,5 si rôdé). Utilisez le « planning poker ».</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loi 7 : Assomption -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-pink" style="color:#ec489a"><i class="fas fa-eye"></i> Loi de l’Assomption</h5>
+                            <p class="card-text"><strong>Principe :</strong> « Ce que tu assumes comme vrai devient ta réalité » (prophétie auto‑réalisatrice).</p>
+                            <p><strong>Exemple :</strong> Un manager croit que son équipe est paresseuse → il micro‑manager → l’équipe se déresponsabilise → confirme la croyance initiale.</p>
+                            <p><strong>REX :</strong> Dans une étude de Harvard, des enseignants informés que certains élèves étaient « à fort potentiel » (en réalité choisis au hasard) ont vu ces élèves progresser de 30% de plus que les autres (effet Pygmalion).</p>
+                            <p><strong>Chiffre :</strong> Les équipes avec des managers qui expriment des attentes élevées dépassent leurs objectifs de <strong>25%</strong> en moyenne.</p>
+                            <p class="mb-0 text-muted"><i class="fas fa-lightbulb"></i> Astuce : Remplacez « je ne peux pas » par « je ne peux pas encore ». Célébrez les petites victoires.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4 small text-muted">
+                <i class="fas fa-database"></i> Sources : retours d’expérience d’entreprises (Netflix, Toyota, Harvard), études publiées (MIT, Flyvbjerg, LinkedIn) et pratiques agiles.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white"><h5 class="modal-title"><i class="fas fa-chart-line"></i> Résultats</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="text-center"><p class="final-score" id="final-score-percentage">0%</p><p><span id="final-score-correct">0</span> / <span id="final-score-total">0</span></p></div>
+                <div class="row"><div class="col-md-6"><h6>Maîtrise pratique</h6><div class="progress"><div id="op-skills" class="progress-bar bg-info" style="width:0%"></div></div><p id="op-text"></p></div>
+                <div class="col-md-6"><h6>Mindset stratégique</h6><div class="progress"><div id="strat-skills" class="progress-bar bg-success" style="width:0%"></div></div><p id="strat-text"></p></div></div>
+                <hr><div id="final-recommendations"></div>
+                <div class="mt-3"><h6>📌 Plan de progression</h6><p id="short-term" class="alert alert-primary"></p><p id="long-term" class="alert alert-secondary"></p></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button><button id="restart-quiz-btn" class="btn btn-audit">Recommencer</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// 80 QUESTIONS UNIQUES - AUCUNE RÉPÉTITION
+// Réparties : Murphy (12), Kindlin (12), Gilbert (12), Wilson (11), Pareto (11), Hofstadter (11), Assomption (11)
+// Toutes axées sur cas pratiques, REX et bonnes pratiques.
+// ============================================================
+const UNIQUE_QUESTIONS = [
+    // MURPHY (12)
+    { thematic:"Loi de Murphy", question:"Comment transformer la loi de Murphy en avantage concurrentiel en DevOps ?", options:["Automatiser les tests d'injection de pannes (chaos engineering)","Ignorer les risques mineurs","Multiplier les validations manuelles","Déployer uniquement la nuit"], correctAnswer:"Automatiser les tests d'injection de pannes (chaos engineering)", explanation:"Murdy prédit que ce qui peut mal tourner arrivera. En provoquant volontairement des pannes (Chaos Monkey), on renforce la résilience et on réduit l'impact des vrais incidents. REX Netflix.", tip:"Organisez des 'game days' mensuels pour tester votre capacité de reprise." },
+    { thematic:"Loi de Murphy", question:"Quel est le REX classique concernant les sauvegardes ?", options:["Une sauvegarde non testée équivaut à aucune sauvegarde","Les sauvegardes quotidiennes suffisent","Le cloud supprime le besoin de sauvegarde","Les sauvegardes incrémentales sont inutiles"], correctAnswer:"Une sauvegarde non testée équivaut à aucune sauvegarde", explanation:"Murphy frappe souvent lors des restaurations : le support est corrompu, la procédure obsolète. Les restaurations doivent être testées régulièrement.", tip:"Automatisez une restauration complète en environnement de staging chaque mois." },
+    { thematic:"Loi de Murphy", question:"Quelle mesure de sécurité illustre la lutte contre Murphy ?", options:["Le principe de moindre privilège","Le chiffrement des disques","Les mots de passe complexes","Les audits annuels"], correctAnswer:"Le principe de moindre privilège", explanation:"Un utilisateur finira par faire une erreur. En limitant ses droits, on réduit les dégâts potentiels. C'est une application directe de Murphy.", tip:"Appliquez le 'zero trust' : même en interne, chaque accès doit être justifié." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les déploiements du vendredi sont-ils déconseillés ?", options:["Parce que l'équipe est fatiguée et les interventions d'urgence le week-end sont plus difficiles","Parce que les serveurs sont moins performants","Parce que les managers ne sont pas là","Parce que les tests sont désactivés"], correctAnswer:"Parce que l'équipe est fatiguée et les interventions d'urgence le week-end sont plus difficiles", explanation:"Murphy s'invite souvent en fin de semaine : la fatigue accroît les erreurs, et la disponibilité réduite allonge les temps de correction. REX des DSI.", tip:"Planifiez les releases critiques le mardi ou mercredi." },
+    { thematic:"Loi de Murphy", question:"Dans un pipeline CI/CD, quelle pratique évite le 'Murphy des dépendances' ?", options:["Mettre en cache toutes les dépendances dans un registre local","Télécharger depuis internet à chaque build","Utiliser des versions 'latest'","Supprimer le lock file"], correctAnswer:"Mettre en cache toutes les dépendances dans un registre local", explanation:"Si le registre public tombe en panne ou qu'une version disparaît, le build échoue. Un miroir interne (Artifactory, Nexus) protège contre cet aléa.", tip:"Utilisez des 'vendoring' pour les langages qui le permettent (Go, Rust)." },
+    { thematic:"Loi de Murphy", question:"Qu'est-ce qu'un 'pre-mortem' en gestion de projet ?", options:["Imaginer que le projet a échoué et remonter aux causes possibles","Faire un bilan après l'échec","Anticiper les succès","Une revue de code"], correctAnswer:"Imaginer que le projet a échoué et remonter aux causes possibles", explanation:"Le pre-mortem est une application proactive de Murphy : on liste tout ce qui pourrait mal tourner avant même de commencer, pour mettre en place des parades.", tip:"Organisez un pre-mortem d'une heure avant chaque phase critique." },
+    { thematic:"Loi de Murphy", question:"Quel indicateur de fiabilité résume la maîtrise de Murphy ?", options:["MTTR (Mean Time To Repair)","Nombre de lignes de code","Taux d'absentéisme","Vélocité"], correctAnswer:"MTTR (Mean Time To Repair)", explanation:"Murphy ne peut être éliminé, mais on peut réduire le temps de récupération. Un MTTR faible montre que l'équipe réagit vite aux incidents.", tip:"Mesurez le MTTR et fixez un objectif de moins d'une heure pour les incidents critiques." },
+    { thematic:"Loi de Murphy", question:"Comment appliquer Murphy à la gestion des mots de passe ?", options:["Utiliser un gestionnaire de mots de passe et activer le MFA","Écrire les mots de passe sur un carnet","Les partager par email","Les réutiliser"], correctAnswer:"Utiliser un gestionnaire de mots de passe et activer le MFA", explanation:"Un utilisateur oubliera ou se fera voler son mot de passe. Le gestionnaire et le MFA limitent les risques.", tip:"Mettez en place une rotation automatique des secrets via Vault." },
+    { thematic:"Loi de Murphy", question:"Que signifie 'Murphy-proofing' une interface utilisateur ?", options:["Empêcher les actions destructrices par des confirmations ou des verrous","Ajouter des avertissements en rouge","Supprimer les boutons","Former les utilisateurs"], correctAnswer:"Empêcher les actions destructrices par des confirmations ou des verrous", explanation:"Un utilisateur cliquera par erreur sur 'supprimer'. Le design anti-erreur (poka-yoke) désamorce Murphy.", tip:"Utilisez des 'undo' et des corbeilles plutôt que des suppressions définitives." },
+    { thematic:"Loi de Murphy", question:"Pourquoi les estimations de tâches incluent-elles souvent un 'facteur Murphy' de 20-30% ?", options:["Pour absorber les imprévus et les retards cachés","Pour faire plaisir au client","Pour réduire la charge","Pour respecter le budget"], correctAnswer:"Pour absorber les imprévus et les retards cachés", explanation:"Les études montrent que les aléas (bug imprévu, arrêt maladie, dépendance) représentent environ 25% du temps. Ignorer Murphy conduit aux dépassements.", tip:"Utilisez l'estimation par fourchette (optimiste, pessimiste, probable)." },
+    { thematic:"Loi de Murphy", question:"Quelle approche architecturale intègre Murphy dès la conception ?", options:["Design for failure (chaque composant peut tomber en panne)","Monolithe centralisé","Base de données unique","SPOF assumé"], correctAnswer:"Design for failure (chaque composant peut tomber en panne)", explanation:"Les architectures cloud modernes (AWS, Azure) partent du principe qu'un serveur, un disque ou un réseau peut lâcher à tout moment. On conçoit des redondances et des bascules.", tip:"Appliquez le pattern 'circuit breaker' et 'retry with backoff'." },
+    { thematic:"Loi de Murphy", question:"En logistique, comment lutter contre la casse des colis ?", options:["Tests de chute et suremballage des produits fragiles","Assurance systématique","Livraison en main propre","Réduire le nombre de colis"], correctAnswer:"Tests de chute et suremballage des produits fragiles", explanation:"Murphy : un colis sera mal manipulé. En testant les emballages en conditions réelles, on réduit la casse. REX Amazon.", tip:"Ajoutez des indicateurs de choc (labels 'fragile' à détection)." },
+    // KINDLIN (12)
+    { thematic:"Loi de Kindlin", question:"Un client dit 'votre logiciel est trop lent'. Quelle reformulation Kindlin ?", options:["Quelle opération dépasse quel seuil de temps (ex: chargement > 3s) ?","C'est subjectif","Augmentez votre bande passante","Changez de navigateur"], correctAnswer:"Quelle opération dépasse quel seuil de temps (ex: chargement > 3s) ?", explanation:"Kindlin : un problème vague ne peut être résolu. Le quantifier (écart observable) le rend actionnable.", tip:"Utilisez des métriques utilisateur réelles (RUM) pour objectiver." },
+    { thematic:"Loi de Kindlin", question:"Une équipe se plaint de 'manque de communication'. Que faire ?", options:["Demander des exemples précis : quel message n'a pas été transmis à qui, avec quel impact ?","Organiser plus de réunions","Ajouter un canal Slack","Nommer un responsable com"], correctAnswer:"Demander des exemples précis : quel message n'a pas été transmis à qui, avec quel impact ?", explanation:"Kindlin : clarifier le 'quoi, qui, quand' transforme une plainte floue en problème concret, donc résolvable.", tip:"Créez un template 'problème' avec champs obligatoires." },
+    { thematic:"Loi de Kindlin", question:"Comment appliquer Kindlin lors d'un bug non reproductible ?", options:["Noter systématiquement l'état du système, les logs et les actions avant l'erreur","Changer de technologie","Ignorer","Redémarrer le serveur"], correctAnswer:"Noter systématiquement l'état du système, les logs et les actions avant l'erreur", explanation:"Kindlin : plus le contexte est clair, plus on s'approche de la cause. La reproduction devient possible.", tip:"Instrumentez votre code avec des traces et un corrélation ID." },
+    { thematic:"Loi de Kindlin", question:"Un responsable dit 'l'équipe n'est pas assez productive'. Reformulation Kindlin :", options:["Quels livrables ont pris plus de temps que prévu et de combien ?","Ils sont paresseux","Augmentez les primes","Faites des tests psychotechniques"], correctAnswer:"Quels livrables ont pris plus de temps que prévu et de combien ?", explanation:"Transformation du jugement vague en écart mesurable. Kindlin rend possible un plan d'action.", tip:"Utilisez des OKR pour objectiver la productivité." },
+    { thematic:"Loi de Kindlin", question:"Dans un incident de sécurité, quelle question Kindlin est prioritaire ?", options:["Quelle donnée a été exfiltrée, par quel vecteur, à quel moment ?","Qui est responsable ?","Combien ça coûte ?","Faut-il démissionner ?"], correctAnswer:"Quelle donnée a été exfiltrée, par quel vecteur, à quel moment ?", explanation:"Clarifier le périmètre de l'incident permet de concentrer les efforts de remédiation. Kindlin évite la panique.", tip:"Ayez un playbook de réponse à incident avec checklists précises." },
+    { thematic:"Loi de Kindlin", question:"Pourquoi la méthode des '5 pourquoi' est-elle un outil Kindlin ?", options:["Elle remonte à la cause racine en clarifiant les enchaînements","Elle donne cinq excuses","Elle évite de chercher","Elle ralentit"], correctAnswer:"Elle remonte à la cause racine en clarifiant les enchaînements", explanation:"Kindlin : chaque 'pourquoi' affine la définition du problème jusqu'à trouver une cause actionnable.", tip:"Ne vous arrêtez pas aux symptômes ; allez jusqu'à la faille système." },
+    { thematic:"Loi de Kindlin", question:"Un commercial dit 'les clients n'achètent pas'. Kindlin l'invite à :", options:["Préciser le segment, l'étape du tunnel où ils abandonnent, et les objections","Baisser les prix","Changer de produit","Faire plus de prospection"], correctAnswer:"Préciser le segment, l'étape du tunnel où ils abandonnent, et les objections", explanation:"Le flou empêche l'action. En identifiant le goulot exact, on peut tester des hypothèses.", tip:"Analysez les entretiens de vente perdus avec une grille de décodage." },
+    { thematic:"Loi de Kindlin", question:"En gestion de projet, qu'est-ce qu'une 'définition de l'état final' ?", options:["Décrire précisément le résultat attendu avec des critères vérifiables","Un objectif vague","Un budget","Un planning"], correctAnswer:"Décrire précisément le résultat attendu avec des critères vérifiables", explanation:"Kindlin : savoir exactement où l'on veut aller évite les dérives et les malentendus.", tip:"Utilisez des 'acceptance criteria' sous forme Gherkin (Given/When/Then)." },
+    { thematic:"Loi de Kindlin", question:"Que faire si une réunion part dans tous les sens ?", options:["Rappeler l'objectif précis et recentrer sur la question initiale","Laisser faire","Changer de salle","Ajouter des participants"], correctAnswer:"Rappeler l'objectif précis et recentrer sur la question initiale", explanation:"Kindlin appliqué à l'animation : clarifier l'objectif évite les digressions.", tip:"Affichez l'ordre du jour et le problème à résoudre en début de réunion." },
+    { thematic:"Loi de Kindlin", question:"Un développeur dit 'c'est complexe'. Comment l'aider ?", options:["Décomposer la complexité en sous-problèmes simples","Ajouter des ressources","Changer de langage","Repousser l'échéance"], correctAnswer:"Décomposer la complexité en sous-problèmes simples", explanation:"Kindlin : fractionner un problème flou en petites briques clarifiées rend la solution accessible.", tip:"Utilisez le 'divide and conquer' et la réduction de périmètre." },
+    { thematic:"Loi de Kindlin", question:"Quel document oblige à clarifier un besoin avant développement ?", options:["User story avec critères d'acceptation","Diagramme de Gantt","Compte-rendu de réunion","Contrat"], correctAnswer:"User story avec critères d'acceptation", explanation:"Une user story sans critères clairs est source d'ambiguïté. Kindlin exige des exemples concrets (tests d'acceptation).", tip:"Adoptez le BDD (Behavior Driven Development)." },
+    { thematic:"Loi de Kindlin", question:"Un problème récurrent dans le support technique est souvent dû à :", options:["Une description imprécise du symptôme par l'utilisateur","Un matériel obsolète","Un bug connu","Une formation insuffisante"], correctAnswer:"Une description imprécise du symptôme par l'utilisateur", explanation:"Kindlin : le temps perdu à chercher la cause vient souvent d'une information floue. Forcer la précision réduit le MTTR.", tip:"Fournissez un formulaire avec des champs contextuels obligatoires." },
+    // GILBERT (12)
+    { thematic:"Loi de Gilbert", question:"Face à une baisse de productivité, que recommande Gilbert ?", options:["Auditionner la méthode de travail et l'organiser en étapes mesurables","Augmenter les effectifs","Baisser les objectifs","Changer d'outil"], correctAnswer:"Auditionner la méthode de travail et l'organiser en étapes mesurables", explanation:"Gilbert : le problème vient rarement d'un manque de moyens, mais d'une méthode inefficace. Optimisez le processus.", tip:"Appliquez le 'value stream mapping' pour identifier les gaspillages." },
+    { thematic:"Loi de Gilbert", question:"Pourquoi la méthode Kanban est-elle un exemple de loi de Gilbert ?", options:["Elle visualise le flux et limite le travail en cours, améliorant la méthode","Elle coûte cher","Elle est complexe","Elle remplace les gens"], correctAnswer:"Elle visualise le flux et limite le travail en cours, améliorant la méthode", explanation:"Gilbert : l'amélioration de la méthode (limiter le multitâche, identifier les goulots) augmente la productivité sans ressources supplémentaires.", tip:"Mesurez le lead time et le débit pour valider l'impact des changements." },
+    { thematic:"Loi de Gilbert", question:"Un service client reçoit 200 appels/jour avec 2 agents. Selon Gilbert, que faire ?", options:["Analyser les causes des appels récurrents et créer une FAQ/automatisation","Doubler l'équipe","Fermer le service","Former les agents à parler plus vite"], correctAnswer:"Analyser les causes des appels récurrents et créer une FAQ/automatisation", explanation:"Gilbert : une meilleure méthode (self-service, bot, FAQ) résout les problèmes à la source, réduisant le volume.", tip:"Utilisez une analyse des 20% de questions qui génèrent 80% des appels." },
+    { thematic:"Loi de Gilbert", question:"Quel outil de résolution de problèmes est emblématique de Gilbert ?", options:["DMAIC (Define, Measure, Analyze, Improve, Control)","Tableau blanc","Email","Diagramme de Gantt"], correctAnswer:"DMAIC (Define, Measure, Analyze, Improve, Control)", explanation:"DMAIC est une méthode structurée issue du Six Sigma : elle force à définir, mesurer, analyser avant d'améliorer. C'est l'essence de Gilbert.", tip:"Appliquez DMAIC même sur de petits projets pour ancrer la rigueur." },
+    { thematic:"Loi de Gilbert", question:"En développement, comment appliquer Gilbert pour réduire les bugs ?", options:["Instaurer des revues de code et des tests automatisés","Travailler plus longtemps","Changer de langage","Embucher des testeurs"], correctAnswer:"Instaurer des revues de code et des tests automatisés", explanation:"Gilbert : la méthode (revue, TDD, CI) améliore la qualité plus efficacement que d'ajouter des ressources.", tip:"Imposez un taux de couverture de tests et des revues systématiques." },
+    { thematic:"Loi de Gilbert", question:"Un entrepreneur échoue malgré un bon financement. Gilbert dirait :", options:["Il n'a pas utilisé la bonne méthode de croissance (customer development, lean startup)","Il lui fallait plus d'argent","La chance n'était pas au rendez-vous","C'est la faute du marché"], correctAnswer:"Il n'a pas utilisé la bonne méthode de croissance (customer development, lean startup)", explanation:"Gilbert : les ressources sans méthode efficiente ne garantissent pas le succès. L'expérimentation et l'itération sont clés.", tip:"Adoptez le 'build-measure-learn' d'Eric Ries." },
+    { thematic:"Loi de Gilbert", question:"Quelle phrase résume le mieux la loi de Gilbert ?", options:["Une meilleure méthode surpasse plus de moyens","L'argent résout tout","Le travail acharné suffit","La chance est primordiale"], correctAnswer:"Une meilleure méthode surpasse plus de moyens", explanation:"C'est le cœur de Gilbert : optimiser le processus rapporte plus que d'ajouter des ressources.", tip:"Avant d'embaucher, examinez si une refonte du processus peut absorber la charge." },
+    { thematic:"Loi de Gilbert", question:"Dans une équipe de vente, deux commerciaux ont les mêmes leads. L'un réussit mieux. Pourquoi ?", options:["Il a une meilleure méthode de closing (qualification, objection handling)","Il est plus beau","Il a plus d'ancienneté","Il ment"], correctAnswer:"Il a une meilleure méthode de closing (qualification, objection handling)", explanation:"Gilbert : la méthode (script, écoute active, relances) fait la différence, pas seulement les moyens.", tip:"Documentez et partagez les 'best practices' de closing." },
+    { thematic:"Loi de Gilbert", question:"Comment Gilbert s'applique-t-il à la gestion du temps ?", options:["Utiliser la matrice d'Eisenhower pour prioriser les tâches","Travailler 80h/semaine","Tout faire en même temps","Répondre à tous les emails"], correctAnswer:"Utiliser la matrice d'Eisenhower pour prioriser les tâches", explanation:"Gilbert : la méthode de priorisation (urgent/important) est plus efficace que de simplement travailler plus.", tip:"Planifiez vos 'deep work' en début de journée." },
+    { thematic:"Loi de Gilbert", question:"Un projet est en retard. Plutôt que d'ajouter des personnes, Gilbert propose :", options:["Identifier et supprimer les tâches à faible valeur ajoutée","Faire des heures supplémentaires","Changer le chef de projet","Ajouter du budget"], correctAnswer:"Identifier et supprimer les tâches à faible valeur ajoutée", explanation:"La méthode lean : réduire le périmètre ou éliminer les gaspillages accélère le projet sans ressources nouvelles.", tip:"Faites un 'scope trimming' avec le client." },
+    { thematic:"Loi de Gilbert", question:"Quel est le piège à éviter selon Gilbert ?", options:["Croire qu'ajouter des ressources compense une mauvaise méthode","Ne jamais former","Travailler en silo","Ignorer les deadlines"], correctAnswer:"Croire qu'ajouter des ressources compense une mauvaise méthode", explanation:"La loi de Brooks 'adding manpower to a late project makes it later' est un corollaire de Gilbert.", tip:"Avant d'ajouter des personnes, stabilisez le processus." },
+    { thematic:"Loi de Gilbert", question:"Comment Gilbert recommande-t-il de gérer une panne récurrente ?", options:["Analyser la cause et changer la méthode de maintenance","Remplacer la machine","Attendre","Former l'opérateur"], correctAnswer:"Analyser la cause et changer la méthode de maintenance", explanation:"Gilbert : une panne qui se répète signale une faille méthodologique (manque de routine, pièce inadaptée).", tip:"Utilisez le 'RCA' (Root Cause Analysis) et implémentez des actions correctives." },
+    // WILSON (11)
+    { thematic:"Loi de Wilson", question:"Selon Wilson, quel investissement rapporte le plus à long terme ?", options:["La formation et l'acquisition de compétences rares","L'immobilier","Les actions en bourse","Le cash"], correctAnswer:"La formation et l'acquisition de compétences rares", explanation:"Wilson : l'argent suit la connaissance. Les compétences pointues créent une valeur que le marché récompense.", tip:"Identifiez une compétence émergente dans votre secteur et devenez expert." },
+    { thematic:"Loi de Wilson", question:"Un professionnel stagne financièrement. Wilson conseille :", options:["Apprendre un nouveau métier ou une spécialisation à forte demande","Changer d'entreprise sans se former","Attendre une promotion","Réduire ses coûts"], correctAnswer:"Apprendre un nouveau métier ou une spécialisation à forte demande", explanation:"Wilson : le revenu est proportionnel à la valeur unique que l'on peut offrir. Se former augmente cette valeur.", tip:"Utilisez des plateformes comme Coursera, Udemy pour acquérir des compétences certifiantes." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les autodidactes réussissent-ils souvent selon Wilson ?", options:["Ils ont appris par eux-mêmes une compétence utile, sans attendre un diplôme","Ils sont chanceux","Ils trichent","Ils héritent"], correctAnswer:"Ils ont appris par eux-mêmes une compétence utile, sans attendre un diplôme", explanation:"Wilson : le savoir acquis (même sans papiers) crée de la valeur. L'autoformation montre aussi de la proactivité.", tip:"Construisez un portfolio de projets concrets pour prouver votre savoir." },
+    { thematic:"Loi de Wilson", question:"Quelle phrase illustre Wilson dans le monde professionnel ?", options:["Formez-vous ou soyez remplacé","Le réseau est tout","L'expérience prime","Le diplôme est roi"], correctAnswer:"Formez-vous ou soyez remplacé", explanation:"Wilson prévient que l'obsolescence des compétences est rapide. Ceux qui investissent dans leur savoir restent pertinents.", tip:"Réservez 5 heures par semaine à l'apprentissage (veille, cours, projet)." },
+    { thematic:"Loi de Wilson", question:"Un entrepreneur veut se lancer sans compétences techniques. Wilson lui dirait :", options:["Associez-vous ou formez-vous sur les aspects critiques","Empruntez de l'argent","Recrutez tout de suite","Faites confiance à la chance"], correctAnswer:"Associez-vous ou formez-vous sur les aspects critiques", explanation:"Wilson : l'argent suit la connaissance. Sans maîtrise du sujet, l'échec est probable.", tip:"Faites un 'apprenticeship' avant de créer votre entreprise." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les pays où l'éducation est accessible sont-ils plus prospères ?", options:["La connaissance collective génère plus d'innovation et de valeur","Ils ont plus de ressources naturelles","Ils sont plus grands","Ils ont moins d'impôts"], correctAnswer:"La connaissance collective génère plus d'innovation et de valeur", explanation:"Wilson à l'échelle macro : le capital humain (savoir) est le principal moteur de richesse.", tip:"Encouragez la culture de l'apprentissage continu dans votre équipe." },
+    { thematic:"Loi de Wilson", question:"Un freelance galère à trouver des missions. Que faire ?", options:["Se spécialiser sur une niche porteuse et suivre une formation avancée","Baisser ses tarifs","Travailler gratuitement","Faire du démarchage massif"], correctAnswer:"Se spécialiser sur une niche porteuse et suivre une formation avancée", explanation:"Wilson : une expertise rare et reconnue attire les clients prêts à payer. La formation est le levier.", tip:"Obtenez une certification reconnue (AWS, PMP, etc.) pour crédibiliser." },
+    { thematic:"Loi de Wilson", question:"Quel est le piège à éviter selon Wilson ?", options:["Attendre que l'argent vienne avant d'apprendre","Apprendre en continu","Investir dans des livres","Suivre des conférences"], correctAnswer:"Attendre que l'argent vienne avant d'apprendre", explanation:"Wilson : l'ordre est d'abord le savoir, ensuite l'argent. Beaucoup font l'inverse et stagnent.", tip:"Considérez la formation comme un investissement prioritaire, pas une dépense." },
+    { thematic:"Loi de Wilson", question:"Comment transformer un hobby en source de revenus ?", options:["Atteindre un niveau d'expertise et monétiser via des cours/consulting","Attendre qu'on vous paie","Copier les autres","Vendre du matériel"], correctAnswer:"Atteindre un niveau d'expertise et monétiser via des cours/consulting", explanation:"Wilson : maîtrisez d'abord le sujet (savoir), puis proposez des services ou produits dérivés.", tip:"Créez un blog ou une chaîne YouTube pour partager votre savoir et attirer des clients." },
+    { thematic:"Loi de Wilson", question:"Pourquoi les entreprises qui forment leurs employés sont-elles plus performantes ?", options:["Elles augmentent le capital intellectuel collectif, source d'innovation","Elles réduisent les salaires","Elles évitent les impôts","Elles embauchent moins"], correctAnswer:"Elles augmentent le capital intellectuel collectif, source d'innovation", explanation:"Wilson appliqué à l'entreprise : la connaissance partagée améliore les méthodes et la réactivité.", tip:"Mettez en place un budget formation et des 'learning Fridays'." },
+    { thematic:"Loi de Wilson", question:"Que signifie 'savoir monnayable' ?", options:["Une compétence pour laquelle des gens sont prêts à payer","Une compétence scolaire","Un diplôme","Un loisir"], correctAnswer:"Une compétence pour laquelle des gens sont prêts à payer", explanation:"Wilson : tout savoir n'a pas de valeur marchande. Il faut identifier les compétences demandées sur le marché.", tip:"Étudiez les offres d'emploi et les missions freelance pour détecter les compétences chaudes." },
+    // PARETO (11)
+    { thematic:"Loi de Pareto", question:"Dans une base de code, quel constat Pareto faites-vous souvent ?", options:["20% des modules contiennent 80% des bugs","80% du code est testé","20% des développeurs écrivent 80% du code","Tous les modules sont égaux"], correctAnswer:"20% des modules contiennent 80% des bugs", explanation:"Pareto appliqué à la qualité logicielle : quelques parties complexes ou mal conçues génèrent la plupart des incidents.", tip:"Utilisez la couverture de code et la complexité cyclomatique pour identifier les hot spots." },
+    { thematic:"Loi de Pareto", question:"Comment appliquer Pareto à la gestion du temps ?", options:["Identifier les 20% de tâches qui produisent 80% de vos résultats","Travailler 80h par semaine","Faire toutes les tâches","Répondre à tous les emails"], correctAnswer:"Identifier les 20% de tâches qui produisent 80% de vos résultats", explanation:"Pareto personnel : concentrez-vous sur les actions à fort impact, déléguez ou éliminez le reste.", tip:"Tenez un journal d'activité pendant une semaine pour repérer vos 20% clés." },
+    { thematic:"Loi de Pareto", question:"En marketing digital, quelle stratégie découle de Pareto ?", options:["Se concentrer sur les 20% de canaux qui génèrent 80% des conversions","Utiliser tous les canaux","Tester au hasard","Copier la concurrence"], correctAnswer:"Se concentrer sur les 20% de canaux qui génèrent 80% des conversions", explanation:"Pareto évite de disperser le budget. Analysez le ROI par canal et doublez les investissements sur ceux qui performent.", tip:"Arrêtez les canaux inefficaces après 3 mois de test." },
+    { thematic:"Loi de Pareto", question:"Quel est l'usage de Pareto dans la gestion des stocks ?", options:["Classification ABC : 20% des références = 80% de la valeur","Stocker tout en quantité égale","Éliminer les stocks","Acheter au plus offrant"], correctAnswer:"Classification ABC : 20% des références = 80% de la valeur", explanation:"Les articles A (20% du nombre, 80% de la valeur) méritent un contrôle rigoureux, les C une gestion allégée.", tip:"Faites un audit de vos références et appliquez des politiques différenciées." },
+    { thematic:"Loi de Pareto", question:"En gestion de projet, les 20% des risques causent 80% des retards. Que faire ?", options:["Identifier et mitiger ces risques critiques","Ignorer les autres risques","Ajouter du budget","Repousser la date"], correctAnswer:"Identifier et mitiger ces risques critiques", explanation:"Pareto appliqué aux risques : concentrez vos efforts sur les quelques risques à fort impact.", tip:"Créez un registre des risques et quantifiez leur probabilité/impact." },
+    { thematic:"Loi de Pareto", question:"Dans une réunion, comment optimiser le temps ?", options:["Traiter les 20% de sujets qui apportent 80% de la valeur","Discuter de tout","Faire durer","Inviter beaucoup de monde"], correctAnswer:"Traiter les 20% de sujets qui apportent 80% de la valeur", explanation:"La plupart des réunions perdent du temps sur des détails. Pareto invite à prioriser les points vraiment importants.", tip:"Établissez un ordre du jour avec une estimation de temps par point." },
+    { thematic:"Loi de Pareto", question:"Un commercial a 100 clients. Que dit Pareto ?", options:["20 clients génèrent 80% du chiffre d'affaires","Tous les clients sont égaux","Il faut 80 nouveaux clients","Les petits clients sont prioritaires"], correctAnswer:"20 clients génèrent 80% du chiffre d'affaires", explanation:"Concentrez la relation client et les actions de fidélisation sur le top 20%.", tip:"Utilisez le scoring RFM pour identifier vos clients 'or'." },
+    { thematic:"Loi de Pareto", question:"En optimisation des performances web, par où commencer ?", options:["Identifier les 20% des ressources (images, scripts) qui pèsent 80% du temps de chargement","Optimiser toutes les images","Changer d'hébergeur","Désactiver le cache"], correctAnswer:"Identifier les 20% des ressources (images, scripts) qui pèsent 80% du temps de chargement", explanation:"Pareto : quelques fichiers lourds ou requêtes lentes constituent le goulot. Ciblez-les d'abord.", tip:"Utilisez Lighthouse ou WebPageTest pour obtenir la répartition." },
+    { thematic:"Loi de Pareto", question:"Quel biais évite la loi de Pareto dans l'analyse ?", options:["L'illusion que tous les problèmes sont également importants","Le biais de confirmation","L'effet Dunning-Kruger","Le biais de survie"], correctAnswer:"L'illusion que tous les problèmes sont également importants", explanation:"Pareto rappelle que la majorité des effets vient d'une minorité de causes. Évitez de traiter tout de manière uniforme.", tip:"Faites un diagramme de Pareto (courbe ABC) pour visualiser." },
+    { thematic:"Loi de Pareto", question:"Dans un processus de fabrication, 80% des défauts viennent de 20% des postes. Que faire ?", options:["Auditer et améliorer ces postes critiques","Changer toute la chaîne","Augmenter les effectifs","Réduire la cadence"], correctAnswer:"Auditer et améliorer ces postes critiques", explanation:"Pareto cible les actions là où le gain est maximum. Améliorez les quelques postes défectueux.", tip:"Utilisez des check-sheets pour collecter les occurrences par poste." },
+    { thematic:"Loi de Pareto", question:"Comment appliquer Pareto à la lecture de rapports ?", options:["Lire les 20% des pages qui contiennent 80% des informations clés","Lire tout en détail","Lire le résumé seulement","Ne pas lire"], correctAnswer:"Lire les 20% des pages qui contiennent 80% des informations clés", explanation:"Skim le document : titres, graphiques, conclusion. Pareto permet un gain de temps considérable.", tip:"Formez votre équipe à la lecture sélective ('scanning')." },
+    // HOFSTADTER (11)
+    { thematic:"Loi de Hofstadter", question:"Pourquoi les projets dépassent-ils toujours les estimations, même avec des marges ?", options:["La complexité cachée se révèle au fur et à mesure","Les développeurs sont paresseux","Le management est mauvais","Les outils sont insuffisants"], correctAnswer:"La complexité cachée se révèle au fur et à mesure", explanation:"Hofstadter : chaque étape découverte en appelle une autre. Le temps réel est toujours supérieur à l'estimation initiale.", tip:"Utilisez des itérations courtes et ré-estimez à chaque itération." },
+    { thematic:"Loi de Hofstadter", question:"Quelle technique de planification intègre Hofstadter ?", options:["Le planning poker avec des story points et une vélocité historique","Le diagramme de Gantt sans marge","Le waterfall pur","Le travail en cascade"], correctAnswer:"Le planning poker avec des story points et une vélocité historique", explanation:"En tenant compte des dépassements passés (vélocité), on obtient des prévisions plus réalistes.", tip:"Calculez le 'facteur Hofstadter' de votre équipe (réel/prévu) sur 5 sprints." },
+    { thematic:"Loi de Hofstadter", question:"Pourquoi les tâches créatives (design, rédaction) sont-elles particulièrement touchées ?", options:["L'exploration de solutions prend un temps imprévisible","Les créatifs sont lents","Manque d'outils","Trop de réunions"], correctAnswer:"L'exploration de solutions prend un temps imprévisible", explanation:"Hofstadter s'applique aux tâches non répétitives : on ne sait pas à l'avance combien d'idées seront nécessaires.", tip:"Utilisez le 'timeboxing' : allouez une durée fixe puis décidez." },
+    { thematic:"Loi de Hofstadter", question:"Qu'est-ce que la 'loi de Hofstadter appliquée aux déplacements' ?", options:["Le trajet prend toujours plus de temps que prévu à cause des imprévus","Les transports sont toujours à l'heure","On peut anticiper exactement","Le GPS corrige tout"], correctAnswer:"Le trajet prend toujours plus de temps que prévu à cause des imprévus", explanation:"Bouchons, travaux, panne : l'expérience quotidienne confirme Hofstadter.", tip:"Ajoutez systématiquement 30% de marge à vos trajets." },
+    { thematic:"Loi de Hofstadter", question:"Comment les méthodologies agiles contrent-elles Hofstadter ?", options:["En livrant par petites itérations, l'erreur d'estimation ne s'accumule pas trop","En ignorant les retards","En supprimant la planification","En travaillant plus"], correctAnswer:"En livrant par petites itérations, l'erreur d'estimation ne s'accumule pas trop", explanation:"Avec des sprints courts, le dépassement est limité et on peut réajuster fréquemment.", tip:"Fixez des objectifs de sprint réalistes basés sur la vélocité passée." },
+    { thematic:"Loi de Hofstadter", question:"Selon Hofstadter, combien de temps faut-il prévoir pour une tâche inédite ?", options:["Multiplier par 2 l'estimation initiale","Diviser par 2","Aucune marge","Prévoir pile poil"], correctAnswer:"Multiplier par 2 l'estimation initiale", explanation:"Le retour d'expérience montre que pour des tâches nouvelles, un coefficient 2 est souvent juste.", tip:"Pour les projets innovants, utilisez une marge de 100%." },
+    { thematic:"Loi de Hofstadter", question:"Quel effet psychologique aggrave Hofstadter ?", options:["L'optimisme excessif (planning fallacy)","Le pessimisme","La peur","Le stress"], correctAnswer:"L'optimisme excessif (planning fallacy)", explanation:"Nous sous-estimons naturellement les imprévus. Hofstadter est une conséquence de ce biais.", tip:"Utilisez des références historiques (anecdotes de projets similaires) pour contrer." },
+    { thematic:"Loi de Hofstadter", question:"Dans un sprint, comment tenir compte de Hofstadter ?", options:["Ne prévoir que 70% de la capacité théorique","Prévoir 120%","Prévoir exactement","Travailler le week-end"], correctAnswer:"Ne prévoir que 70% de la capacité théorique", explanation:"Les imprévus (bugs, interruptions) mangent le temps. Réduire la charge prévue permet de finir dans les temps.", tip:"Réservez 20% de la capacité pour les 'imprévus' (gestion des dettes techniques)." },
+    { thematic:"Loi de Hofstadter", question:"Que signifie 'l'effet Hofstadter' dans les études ?", options:["Réviser prend toujours plus de temps que prévu","Il faut réviser moins","Les examens sont faciles","Le temps de révision est exact"], correctAnswer:"Réviser prend toujours plus de temps que prévu", explanation:"On sous-estime le temps nécessaire pour maîtriser un sujet, à cause des zones de difficulté imprévues.", tip:"Découpez votre révision en micro-sessions et testez-vous régulièrement." },
+    { thematic:"Loi de Hofstadter", question:"Comment les rétrospectives aident-elles à dompter Hofstadter ?", options:["En mesurant l'écart réel vs estimé pour améliorer les futures estimations","En critiquant les retardataires","En allongeant les sprints","En supprimant les estimations"], correctAnswer:"En mesurant l'écart réel vs estimé pour améliorer les futures estimations", explanation:"La loi de Hofstadter ne disparaît pas, mais on peut apprendre de ses erreurs pour affiner les marges.", tip:"Calculez un 'facteur de correction' spécifique à chaque type de tâche." },
+    { thematic:"Loi de Hofstadter", question:"Pourquoi les grands projets d'infrastructure dépassent-ils toujours ?", options:["Découvertes géologiques, recours, changements de spécifications – tous imprévus","Corruption","Mauvaise gestion","Météo"], correctAnswer:"Découvertes géologiques, recours, changements de spécifications – tous imprévus", explanation:"Hofstadter à grande échelle : les aléas s'accumulent et multiplient les délais.", tip:"Intégrez des clauses d'ajustement et des réserves pour imprévus." },
+    // ASSOMPTION (11)
+    { thematic:"Loi de l'Assomption", question:"Un étudiant croit qu'il va échouer. Quel phénomène se produit ?", options:["Prophétie auto-réalisatrice : il révise moins, stress, et échoue","Il réussit par défi","Cela n'a pas d'effet","Il devient surmotivé"], correctAnswer:"Prophétie auto-réalisatrice : il révise moins, stress, et échoue", explanation:"L'assomption négative change les comportements (évitement, anxiété) qui mènent à l'échec.", tip:"Remplacez 'je vais échouer' par 'je vais faire de mon mieux et apprendre'." },
+    { thematic:"Loi de l'Assomption", question:"En management, l'effet Pygmalion montre que :", options:["Des attentes élevées améliorent la performance","Des attentes basses améliorent","Les attentes n'ont aucun effet","Seuls les bonus marchent"], correctAnswer:"Des attentes élevées améliorent la performance", explanation:"Si le manager croit en la réussite de son équipe, il la soutient plus, et l'équipe performe mieux. C'est le pendant positif de l'assomption.", tip:"Fixez des objectifs ambitieux mais réalisables, et donnez des moyens." },
+    { thematic:"Loi de l'Assomption", question:"Un développeur pense que son code va planter. Que risque-t-il ?", options:["Il va introduire plus de bugs par manque de confiance","Son code sera parfait","Rien ne change","Le code sera plus robuste"], correctAnswer:"Il va introduire plus de bugs par manque de confiance", explanation:"L'assomption négative génère du stress et des erreurs d'attention, augmentant la probabilité de bugs.", tip:"Pratiquez la 'programmation en binôme' pour sécuriser et rassurer." },
+    { thematic:"Loi de l'Assomption", question:"Comment inverser une croyance limitante ?", options:["Accumuler des petites victoires et se fixer des objectifs progressifs","Nier la réalité","Attendre un miracle","Comparer aux génies"], correctAnswer:"Accumuler des petites victoires et se fixer des objectifs progressifs", explanation:"Les preuves concrètes de réussite (même modestes) modifient l'assomption. C'est la base de la thérapie cognitive.", tip:"Tenez un journal de vos réussites quotidiennes." },
+    { thematic:"Loi de l'Assomption", question:"Un entrepreneur croit que son marché n'existe pas. Quelle conséquence ?", options:["Il n'investit pas, ne cherche pas, et effectivement ne trouve pas de clients","Il trouve un marché caché","Il change de produit","Il fait faillite malgré tout"], correctAnswer:"Il n'investit pas, ne cherche pas, et effectivement ne trouve pas de clients", explanation:"L'assomption dirige l'action : sans prospection active, impossible de valider l'existence d'un marché.", tip:"Testez toujours une hypothèse de marché avec une offre minimale (fake door test)." },
+    { thematic:"Loi de l'Assomption", question:"Pourquoi les feedbacks positifs sont-ils importants ?", options:["Ils renforcent les croyances de compétence, améliorant les performances futures","Ils gonflent l'ego","Ils sont inutiles","Ils créent de la dépendance"], correctAnswer:"Ils renforcent les croyances de compétence, améliorant les performances futures", explanation:"L'assomption positive se nourrit de reconnaissance. Une équipe valorisée croit en sa capacité à résoudre des problèmes.", tip:"Donnez un feedback spécifique et sincère après chaque succès." },
+    { thematic:"Loi de l'Assomption", question:"Un manager pense que son équipe est incompétente. Quel sera l'impact ?", options:["Micro-management, démotivation, baisse réelle de compétence","L'équipe s'améliore","Rien","L'équipe démissionne"], correctAnswer:"Micro-management, démotivation, baisse réelle de compétence", explanation:"L'effet Golem : les attentes négatives créent un climat toxique qui détériore les performances.", tip:"Adoptez une posture de 'coach' et assumez que chacun peut progresser." },
+    { thematic:"Loi de l'Assomption", question:"Comment l'auto-efficacité (self-efficacy) est-elle liée à l'assomption ?", options:["La croyance en sa propre capacité influence directement la persévérance et la réussite","La compétence réelle seule compte","La chance est plus importante","L'aide des autres est primordiale"], correctAnswer:"La croyance en sa propre capacité influence directement la persévérance et la réussite", explanation:"Les travaux de Bandura montrent que l'assomption de compétence est un prédicteur majeur de succès.", tip:"Visualisez-vous en train de réussir une tâche difficile avant de commencer." },
+    { thematic:"Loi de l'Assomption", question:"Un entretien d'embauche : un candidat pense qu'il va échouer. Comment cela se manifeste ?", options:["Langage non-verbal fermé, hésitations, qui confirment sa peur","Il est détendu","Il réussit mieux","Il est sur-confiant"], correctAnswer:"Langage non-verbal fermé, hésitations, qui confirment sa peur", explanation:"L'assomption négative se traduit par des signaux qui renforcent l'impression négative du recruteur.", tip:"Avant l'entretien, pratiquez des exercices de respiration et visualisez une issue positive." },
+    { thematic:"Loi de l'Assomption", question:"Dans un projet, l'équipe croit que la deadline est impossible. Que faire ?", options:["Recadrer sur des objectifs intermédiaires atteignables pour reconstruire la confiance","Repousser la deadline","Ajouter des personnes","Travailler la nuit"], correctAnswer:"Recadrer sur des objectifs intermédiaires atteignables pour reconstruire la confiance", explanation:"Changer l'assomption collective passe par des succès progressifs. Le sprint doit être réajusté.", tip:"Célébrez chaque jalon franchi pour maintenir la croyance positive." },
+    { thematic:"Loi de l'Assomption", question:"Quelle phrase transforme une croyance limitante en croyance productive ?", options:["Je ne maîtrise pas encore ceci, mais je peux apprendre","Je suis nul","C'est trop dur pour moi","Je n'y arriverai jamais"], correctAnswer:"Je ne maîtrise pas encore ceci, mais je peux apprendre", explanation:"L'état d'esprit de développement (growth mindset) remplace l'assomption fixe par une croyance en l'apprentissage.", tip:"Ajoutez le mot 'encore' à vos phrases d'échec." }
+];
+
+const ALL_QUESTIONS = UNIQUE_QUESTIONS.slice(0,80);
+console.assert(ALL_QUESTIONS.length === 80, "Il manque des questions");
+
+// ------------------- LOGIQUE DU QUIZ (AVEC CORRECTIONS) -------------------
+let currentIndex=0, score=0, userAnswers=[], questions=[], selectedCount=40;
+const settingsPanel=document.getElementById('settings-panel'), quizContent=document.getElementById('quiz-content');
+const startBtn=document.getElementById('start-quiz-btn'), nextBtn=document.getElementById('next-btn'), prevBtn=document.getElementById('prev-btn'), finishBtn=document.getElementById('finish-btn');
+const questionCounter=document.getElementById('question-counter'), currentScoreSpan=document.getElementById('current-score'), progressBar=document.getElementById('progress-bar');
+const questionText=document.getElementById('question-text'), thematicBadge=document.getElementById('thematic-badge'), optionsDiv=document.getElementById('options-container');
+const explanationBox=document.getElementById('explanation-box');
+const resultsModal=new bootstrap.Modal(document.getElementById('resultsModal'));
+const restartBtn=document.getElementById('restart-quiz-btn');
+const badgeMap = { "Loi de Murphy":"badge-murphy","Loi de Kindlin":"badge-kindlin","Loi de Gilbert":"badge-gilbert","Loi de Wilson":"badge-wilson","Loi de Pareto":"badge-pareto","Loi de Hofstadter":"badge-hofstadter","Loi de l'Assomption":"badge-assomption" };
+
+// Fonction de normalisation (supprime espaces superflus)
+function normalize(s) {
+    return s.trim().replace(/\s+/g, ' ');
+}
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function filterByDomains(){
+    const doms=[];
+    if(document.getElementById('dom-murphy').checked) doms.push("Loi de Murphy");
+    if(document.getElementById('dom-kindlin').checked) doms.push("Loi de Kindlin");
+    if(document.getElementById('dom-gilbert').checked) doms.push("Loi de Gilbert");
+    if(document.getElementById('dom-wilson').checked) doms.push("Loi de Wilson");
+    if(document.getElementById('dom-pareto').checked) doms.push("Loi de Pareto");
+    if(document.getElementById('dom-hofstadter').checked) doms.push("Loi de Hofstadter");
+    if(document.getElementById('dom-assomption').checked) doms.push("Loi de l'Assomption");
+    if(doms.length===0) return [...ALL_QUESTIONS];
+    return ALL_QUESTIONS.filter(q=>doms.includes(q.thematic));
+}
+
+function startQuiz(){
+    selectedCount=parseInt(document.getElementById('question-count').value);
+    let filtered=filterByDomains();
+    if(filtered.length<selectedCount) selectedCount=filtered.length;
+    questions=shuffle(filtered).slice(0,selectedCount);
+    currentIndex=0; score=0; userAnswers=new Array(questions.length).fill(null);
+    settingsPanel.classList.add('d-none'); quizContent.classList.remove('d-none');
+    displayQuestion(0); updateScore();
+}
+
+function updateScore(){ currentScoreSpan.innerText=`Score: ${score}/${questions.length}`; }
+
+function displayQuestion(index){
+    explanationBox.classList.add('d-none');
+    const q=questions[index];
+    questionText.innerText=q.question;
+    thematicBadge.innerText=q.thematic;
+    thematicBadge.className='thematic-badge '+ (badgeMap[q.thematic] || 'badge-murphy');
+    optionsDiv.innerHTML='';
+    const shuffledOpts=shuffle([...q.options]);
+    shuffledOpts.forEach(opt=>{
+        const btn=document.createElement('button');
+        btn.innerText=opt; btn.className='btn option-btn';
+        btn.onclick=()=>selectAnswer(btn,opt,index);
+        optionsDiv.appendChild(btn);
+    });
+    if(userAnswers[index]) showFeedback(index);
+    const progress=((index+1)/questions.length)*100;
+    progressBar.style.width=`${progress}%`;
+    questionCounter.innerText=`Question ${index+1} / ${questions.length}`;
+    prevBtn.disabled=index===0;
+    nextBtn.classList.toggle('d-none', index===questions.length-1);
+    finishBtn.classList.toggle('d-none', index!==questions.length-1);
+}
+
+function selectAnswer(btn, selected, idx){
+    if(userAnswers[idx]!==null) return;
+    const q=questions[idx];
+    const isCorrect = normalize(selected) === normalize(q.correctAnswer);
+    if(isCorrect) score++;
+    userAnswers[idx]={selected, correct:q.correctAnswer, isCorrect};
+    updateScore();
+
+    // Désactiver tous les boutons et colorer
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(b => {
+        b.disabled = true;
+        if(normalize(b.innerText) === normalize(q.correctAnswer)) {
+            b.classList.add('correct');
+        }
+        if(b === btn && !isCorrect) {
+            b.classList.add('incorrect');
+        }
+    });
+
+    showFeedback(idx);
+}
+
+function showFeedback(idx){
+    const ua = userAnswers[idx];
+    if(!ua) return;
+    const q = questions[idx];
+    const isUserCorrect = ua.isCorrect;
+    const correctAnswerText = q.correctAnswer;
+
+    const feedbackHtml = `
+        <div class="${isUserCorrect ? 'explanation-correct' : 'explanation-incorrect'} p-3 rounded">
+            <h5>${isUserCorrect ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}</h5>
+            <p><strong>📌 La bonne réponse était :</strong> ${correctAnswerText}</p>
+            <p><strong>📖 Explication détaillée :</strong> ${q.explanation}</p>
+            ${q.tip ? `<div class="tip-box mt-2 p-2"><strong>💡 Conseil pratique / REX :</strong> ${q.tip}</div>` : ''}
+        </div>
+    `;
+    explanationBox.innerHTML = feedbackHtml;
+    explanationBox.classList.remove('d-none');
+}
+
+function handleNext(){ if(currentIndex<questions.length-1){ currentIndex++; displayQuestion(currentIndex); } }
+function handlePrev(){ if(currentIndex>0){ currentIndex--; displayQuestion(currentIndex); } }
+
+function showFinal(){
+    const percent=(score/questions.length)*100;
+    document.getElementById('final-score-correct').innerText=score;
+    document.getElementById('final-score-total').innerText=questions.length;
+    document.getElementById('final-score-percentage').innerText=`${percent.toFixed(0)}%`;
+    document.getElementById('op-skills').style.width=`${percent}%`;
+    document.getElementById('strat-skills').style.width=`${percent}%`;
+    document.getElementById('op-text').innerText=`Maîtrise opérationnelle : ${percent.toFixed(0)}%`;
+    document.getElementById('strat-text').innerText=`Mindset : ${percent.toFixed(0)}%`;
+    let recos= percent>=80?"Exceptionnel ! Vous intégrez les lois au quotidien.": percent>=60?"Bon niveau, renforcez-vous sur les lois où vous avez le plus d'erreurs.":"Reprenez les fiches des lois et pratiquez avec des cas réels.";
+    document.getElementById('final-recommendations').innerHTML=`<h6>🎯 Synthèse</h6><p>${recos}</p>`;
+    document.getElementById('short-term').innerHTML="<i class='fas fa-check-circle'></i> Appliquez une loi par semaine avec un cas personnel.";
+    document.getElementById('long-term').innerHTML="<i class='fas fa-chart-line'></i> Devenez référent en résilience et méthode dans votre équipe.";
+    resultsModal.show();
+}
+
+function restart(){ settingsPanel.classList.remove('d-none'); quizContent.classList.add('d-none'); resultsModal.hide(); }
+
+startBtn.addEventListener('click',startQuiz);
+nextBtn.addEventListener('click',handleNext);
+prevBtn.addEventListener('click',handlePrev);
+finishBtn.addEventListener('click',showFinal);
+restartBtn.addEventListener('click',restart);
+</script>
+</body>
+</html>
